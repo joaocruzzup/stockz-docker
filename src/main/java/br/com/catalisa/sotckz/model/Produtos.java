@@ -29,6 +29,10 @@ public class Produtos {
     @Positive
     private Long quantidade;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categorias categoria;
+
     @ManyToMany
     @JoinTable(
             name = "produto_comprador",
