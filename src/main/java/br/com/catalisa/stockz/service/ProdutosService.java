@@ -1,6 +1,8 @@
 package br.com.catalisa.stockz.service;
 
 import br.com.catalisa.stockz.enums.StatusProduto;
+import br.com.catalisa.stockz.exception.AtributoNaoPreenchidoException;
+import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.Categorias;
 import br.com.catalisa.stockz.model.Produtos;
 import br.com.catalisa.stockz.model.dto.ProdutosDTO;
@@ -44,7 +46,7 @@ public class ProdutosService {
         Optional<Produtos> produtosOptional = produtosRepository.findById(id);
 
         if (produtosOptional.isEmpty() || produtosOptional.get().getStatusProduto() == StatusProduto.INATIVO){
-            throw new Exception("Produto não encontrado");
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
         Produtos produtos = produtosOptional.get();
         ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
@@ -56,7 +58,7 @@ public class ProdutosService {
     public ProdutosDTO criar(ProdutosDTO produtosDTO) throws Exception {
         Optional<Categorias> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
         if (categoriaOptional.isEmpty()){
-            throw new Exception("Categoria não presente");
+            throw new AtributoNaoPreenchidoException("Atributo categoria preenchido incorretamente");
         }
         produtosDTO.setQuantidade(0);
         Produtos produtos = produtosMapper.toProdutos(produtosDTO);
@@ -65,12 +67,11 @@ public class ProdutosService {
         return produtosDTO;
     }
 
-    //ToDo revisar esse método na parte da categoria
     public ProdutosDTO atualizar(Long id, ProdutosDTO produtosDTO) throws Exception {
 
         Optional<Produtos> produtosOptional = produtosRepository.findById(id);
         if (produtosOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
         Produtos produtoEncontrado = produtosOptional.get();
 
@@ -86,7 +87,7 @@ public class ProdutosService {
         if (produtosDTO.getCategoria().getId() != null){
             Optional<Categorias> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
             if (categoriaOptional.isEmpty()){
-                throw new Exception("Categoria não presente");
+                throw new EntidadeNaoEncontradaException("Categoria não encontrada");
             }
             produtoEncontrado.setCategoria(categoriaOptional.get());
         }
@@ -98,7 +99,7 @@ public class ProdutosService {
     public void deletar(Long id) throws Exception {
         Optional<Produtos> produtosOptional = produtosRepository.findById(id);
         if (produtosOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
         Produtos produtos = produtosOptional.get();
         produtos.setStatusProduto(StatusProduto.INATIVO);
