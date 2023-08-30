@@ -1,10 +1,10 @@
-package br.com.catalisa.sotckz;
+package br.com.catalisa.stockz;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SotckzApplicationTests {
+class StockzApplicationTests {
 
 	@Test
 	void contextLoads() {
