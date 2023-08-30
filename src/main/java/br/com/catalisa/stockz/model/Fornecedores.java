@@ -1,26 +1,29 @@
-package br.com.catalisa.sotckz.model;
+package br.com.catalisa.stockz.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Categorias {
+public class Fornecedores {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @UniqueElements
     private String nome;
 
-    @OneToMany(mappedBy = "categoria")
-    private Produtos produtos;
+    @Email
+    private String email;
+
+//    @ManyToMany(mappedBy = "fornecedores")
+//    private List<Produtos> produtos;
 }
