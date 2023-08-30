@@ -1,5 +1,6 @@
 package br.com.catalisa.stockz.model;
 
+import br.com.catalisa.stockz.enums.StatusProduto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,9 @@ public class Produtos {
 
     @PositiveOrZero
     private Integer quantidade;
+
+    @Enumerated(EnumType.STRING)
+    private StatusProduto statusProduto = StatusProduto.ATIVO;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")

@@ -1,5 +1,6 @@
 package br.com.catalisa.stockz.service;
 
+import br.com.catalisa.stockz.enums.StatusProduto;
 import br.com.catalisa.stockz.model.Categorias;
 import br.com.catalisa.stockz.model.Produtos;
 import br.com.catalisa.stockz.model.dto.ProdutosDTO;
@@ -29,8 +30,10 @@ public class ProdutosService {
         List<Produtos> produtosList = produtosRepository.findAll();
         List<ProdutosDTO> produtosDTOList = new ArrayList<>();
         for (Produtos produtos: produtosList) {
-            ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
-            produtosDTOList.add(produtosDTO);
+            if (produtos.getStatusProduto() == StatusProduto.ATIVO){
+                ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
+                produtosDTOList.add(produtosDTO);
+            }
         }
 
         return produtosDTOList;
@@ -40,8 +43,8 @@ public class ProdutosService {
 
         Optional<Produtos> produtosOptional = produtosRepository.findById(id);
 
-        if (produtosOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
+        if (produtosOptional.isEmpty() || produtosOptional.get().getStatusProduto() == StatusProduto.INATIVO){
+            throw new Exception("Produto não encontrado");
         }
         Produtos produtos = produtosOptional.get();
         ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
@@ -69,23 +72,27 @@ public class ProdutosService {
         if (produtosOptional.isEmpty()){
             throw new Exception("Fornecedor não encontrada");
         }
-        Produtos produtos = produtosOptional.get();
-        ProdutosDTO produtosDTORetorno = produtosMapper.toProdutosDTO(produtos);
+        Produtos produtoEncontrado = produtosOptional.get();
 
         if (produtosDTO.getNome() != null){
-            produtosDTORetorno.setNome(produtosDTO.getNome());
+            produtoEncontrado.setNome(produtosDTO.getNome());
         }
         if (produtosDTO.getPreco() != null){
-            produtosDTORetorno.setPreco(produtosDTO.getPreco());
+            produtoEncontrado.setPreco(produtosDTO.getPreco());
         }
         if (produtosDTO.getDescricao() != null){
-            produtosDTORetorno.setDescricao(produtosDTO.getDescricao());
+            produtoEncontrado.setDescricao(produtosDTO.getDescricao());
         }
         if (produtosDTO.getCategoria().getId() != null){
-            produtosDTORetorno.setCategoria(produtosDTO.getCategoria());
+            Optional<Categorias> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
+            if (categoriaOptional.isEmpty()){
+                throw new Exception("Categoria não presente");
+            }
+            produtoEncontrado.setCategoria(categoriaOptional.get());
         }
+        produtosRepository.save(produtoEncontrado);
 
-        return produtosDTORetorno;
+        return produtosMapper.toProdutosDTO(produtoEncontrado);
     }
 
     public void deletar(Long id) throws Exception {
@@ -94,6 +101,7 @@ public class ProdutosService {
             throw new Exception("Fornecedor não encontrada");
         }
         Produtos produtos = produtosOptional.get();
+        produtos.setStatusProduto(StatusProduto.INATIVO);
         produtosRepository.delete(produtos);
     }
 }

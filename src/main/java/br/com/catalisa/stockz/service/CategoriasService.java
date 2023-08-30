@@ -1,8 +1,10 @@
 package br.com.catalisa.stockz.service;
 
 import br.com.catalisa.stockz.model.Categorias;
+import br.com.catalisa.stockz.model.Produtos;
 import br.com.catalisa.stockz.model.dto.CategoriasDTO;
 import br.com.catalisa.stockz.repository.CategoriasRepository;
+import br.com.catalisa.stockz.repository.ProdutosRepository;
 import br.com.catalisa.stockz.utils.mapper.CategoriasMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ import java.util.Optional;
 public class CategoriasService {
     @Autowired
     private CategoriasRepository categoriasRepository;
+
+    @Autowired
+    private ProdutosRepository produtosRepository;
 
     @Autowired
     private CategoriasMapper categoriasMapper;
@@ -56,14 +61,15 @@ public class CategoriasService {
         if (categoriasOptional.isEmpty()){
             throw new Exception("Categoria não encontrada");
         }
-        Categorias categorias = categoriasOptional.get();
-        CategoriasDTO categoriasDTORetorno = categoriasMapper.toCategoriasDto(categorias);
+        Categorias categoriaEncontrada = categoriasOptional.get();
 
         if (categoriasDTO.getNome() != null){
-            categoriasDTORetorno.setNome(categoriasDTO.getNome());
+            categoriaEncontrada.setNome(categoriasDTO.getNome());
         }
 
-        return categoriasDTORetorno;
+        categoriasRepository.save(categoriaEncontrada);
+
+        return categoriasMapper.toCategoriasDto(categoriaEncontrada);
     }
 
     public void deletar(Long id) throws Exception {
@@ -71,8 +77,14 @@ public class CategoriasService {
         if (categoriasOptional.isEmpty()){
             throw new Exception("Categoria não encontrada");
         }
-        Categorias categorias = categoriasOptional.get();
-        categoriasRepository.delete(categorias);
+        Categorias categoriaEncontrada = categoriasOptional.get();
+
+        Optional<Produtos> produtosOptional = produtosRepository.findByCategoria(categoriaEncontrada);
+        if (produtosOptional.isPresent()){
+            throw new Exception(("Categoria atrelada a um produto. Atualize primeiro a categoria do produto"));
+        }
+
+        categoriasRepository.delete(categoriaEncontrada);
     }
 
 }
