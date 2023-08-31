@@ -6,6 +6,7 @@ import br.com.catalisa.stockz.model.Estoque;
 import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.TransacaoSaida;
 import br.com.catalisa.stockz.model.dto.TransacaoSaidaDTO;
+import br.com.catalisa.stockz.model.dto.TransacaoSaidaResponseDTO;
 import br.com.catalisa.stockz.repository.CompradorRepository;
 import br.com.catalisa.stockz.repository.EstoqueRepository;
 import br.com.catalisa.stockz.repository.ProdutoRepository;
@@ -35,26 +36,26 @@ public class TransacaoSaidaService {
     @Autowired
     private TransacaoSaidaMapper transacaoSaidaMapper;
 
-    public List<TransacaoSaidaDTO> listarTodos(){
+    public List<TransacaoSaidaResponseDTO> listarTodos(){
 
         List<TransacaoSaida> transacaoSaidaList = transacaoSaidaRepository.findAll();
-        List<TransacaoSaidaDTO> transacaoSaidaDTOList = new ArrayList<>();
+        List<TransacaoSaidaResponseDTO> transacaoSaidaDTOList = new ArrayList<>();
         for (TransacaoSaida transacaoSaida: transacaoSaidaList) {
-            TransacaoSaidaDTO transacaoSaidaDTO = transacaoSaidaMapper.toTransacaoSaidaDTO(transacaoSaida);
+            TransacaoSaidaResponseDTO transacaoSaidaDTO = transacaoSaidaMapper.toTransacaoSaidaResponseDTO(transacaoSaida);
             transacaoSaidaDTOList.add(transacaoSaidaDTO);
         }
 
         return transacaoSaidaDTOList;
     }
 
-    public TransacaoSaidaDTO listarPorId(Long id) throws Exception {
+    public TransacaoSaidaResponseDTO listarPorId(Long id) throws Exception {
         TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
-        TransacaoSaidaDTO transacaoSaidaDTO = transacaoSaidaMapper.toTransacaoSaidaDTO(transacaoSaida);
+        TransacaoSaidaResponseDTO transacaoSaidaDTO = transacaoSaidaMapper.toTransacaoSaidaResponseDTO(transacaoSaida);
 
         return transacaoSaidaDTO;
     }
 
-    public TransacaoSaidaDTO criar(TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
+    public TransacaoSaidaResponseDTO criar(TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
 
         Comprador comprador = buscarComprador(transacaoSaidaDTO.getEmailComprador());
         Produto produto = buscarProduto(transacaoSaidaDTO.getProduto().getId());
@@ -63,29 +64,7 @@ public class TransacaoSaidaService {
 
         atualizarEstoque(estoqueEncontrado, transacaoSaida);
 
-        return transacaoSaidaDTO;
-    }
-
-    public TransacaoSaidaDTO atualizar(Long id, TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
-        TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
-        TransacaoSaidaDTO fornecedoresDTORetorno = transacaoSaidaMapper.toTransacaoSaidaDTO(transacaoSaida);
-
-        if (transacaoSaidaDTO.getProduto() != null){
-            fornecedoresDTORetorno.setProduto(transacaoSaidaDTO.getProduto());
-        }
-        if (transacaoSaidaDTO.getQuantidade() != null){
-            fornecedoresDTORetorno.setQuantidade(transacaoSaidaDTO.getQuantidade());
-        }
-        if (transacaoSaidaDTO.getEmailComprador() != null){
-            fornecedoresDTORetorno.setEmailComprador(transacaoSaidaDTO.getEmailComprador());
-        }
-
-        return fornecedoresDTORetorno;
-    }
-
-    public void deletar(Long id) throws Exception {
-        TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
-        transacaoSaidaRepository.delete(transacaoSaida);
+        return transacaoSaidaMapper.toTransacaoSaidaResponseDTO(transacaoSaida);
     }
 
     private TransacaoSaida buscarTransacaoSaidaPorId(Long id) throws Exception {
@@ -109,6 +88,7 @@ public class TransacaoSaidaService {
 
     private TransacaoSaida criarTransacaoSaida(TransacaoSaidaDTO transacaoSaidaDTO, Produto produto) throws Exception {
         TransacaoSaida transacaoSaida = transacaoSaidaMapper.toTransacaoSaida(transacaoSaidaDTO);
+        transacaoSaida.setProduto(produto);
         transacaoSaida.setEstoque(buscarEstoqueDoProduto(produto));
         return transacaoSaida;
     }

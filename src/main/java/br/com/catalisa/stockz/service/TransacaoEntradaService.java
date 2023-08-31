@@ -2,7 +2,9 @@ package br.com.catalisa.stockz.service;
 
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.*;
+import br.com.catalisa.stockz.model.dto.CategoriaDTO;
 import br.com.catalisa.stockz.model.dto.TransacaoEntradaDTO;
+import br.com.catalisa.stockz.model.dto.TransacaoEntradaResponseDTO;
 import br.com.catalisa.stockz.repository.FornecedorRepository;
 import br.com.catalisa.stockz.repository.ProdutoRepository;
 import br.com.catalisa.stockz.repository.TransacaoEntradaRepository;
@@ -31,25 +33,24 @@ public class TransacaoEntradaService {
     @Autowired
     private FornecedorRepository fornecedorRepository;
 
-    public List<TransacaoEntradaDTO> listarTodos(){
+    public List<TransacaoEntradaResponseDTO> listarTodos(){
 
         List<TransacaoEntrada> transacaoEntradaList = transacaoEntradaRepository.findAll();
-        List<TransacaoEntradaDTO> transacaoEntradaDTOList = new ArrayList<>();
+        List<TransacaoEntradaResponseDTO> transacaoEntradaDTOList = new ArrayList<>();
         for (TransacaoEntrada transacaoEntrada: transacaoEntradaList) {
-            TransacaoEntradaDTO transacaoEntradaDTO = transacaoEntradaMapper.toTransacaoEntradaDTO(transacaoEntrada);
+            TransacaoEntradaResponseDTO transacaoEntradaDTO = transacaoEntradaMapper.toTransacaoEntradaResponseDTO(transacaoEntrada);
             transacaoEntradaDTOList.add(transacaoEntradaDTO);
         }
-
         return transacaoEntradaDTOList;
     }
 
-    public TransacaoEntradaDTO listarPorId(Long id) throws Exception {
+    public TransacaoEntradaResponseDTO listarPorId(Long id) throws Exception {
         TransacaoEntrada transacaoEntrada = buscarTransacaoEntradaPorId(id);
-        TransacaoEntradaDTO transacaoEntradaDTO = transacaoEntradaMapper.toTransacaoEntradaDTO(transacaoEntrada);
+        TransacaoEntradaResponseDTO transacaoEntradaDTO = transacaoEntradaMapper.toTransacaoEntradaResponseDTO(transacaoEntrada);
         return transacaoEntradaDTO;
     }
 
-    public TransacaoEntradaDTO criar(TransacaoEntradaDTO transacaoEntradaDTO) throws Exception {
+    public TransacaoEntradaResponseDTO criar(TransacaoEntradaDTO transacaoEntradaDTO) throws Exception {
         Fornecedor fornecedor = buscarFornecedor(transacaoEntradaDTO.getEmailFornecedor());
         Produto produto = buscarProduto(transacaoEntradaDTO.getProduto().getId());
 
@@ -60,29 +61,7 @@ public class TransacaoEntradaService {
         produtoRepository.save(produto);
         transacaoEntradaRepository.save(transacaoEntrada);
 
-        return transacaoEntradaDTO;
-    }
-
-    public TransacaoEntradaDTO atualizar(Long id, TransacaoEntradaDTO transacaoEntradaDTO) throws Exception {
-        TransacaoEntrada transacaoEntrada = buscarTransacaoEntradaPorId(id);
-        TransacaoEntradaDTO fornecedoresDTORetorno = transacaoEntradaMapper.toTransacaoEntradaDTO(transacaoEntrada);
-
-        if (transacaoEntradaDTO.getProduto() != null){
-            fornecedoresDTORetorno.setProduto(transacaoEntradaDTO.getProduto());
-        }
-        if (transacaoEntradaDTO.getQuantidade() != null){
-            fornecedoresDTORetorno.setQuantidade(transacaoEntradaDTO.getQuantidade());
-        }
-        if (transacaoEntradaDTO.getEmailFornecedor() != null){
-            fornecedoresDTORetorno.setEmailFornecedor(transacaoEntradaDTO.getEmailFornecedor());
-        }
-
-        return fornecedoresDTORetorno;
-    }
-
-    public void deletar(Long id) throws Exception {
-        TransacaoEntrada transacaoEntrada = buscarTransacaoEntradaPorId(id);
-        transacaoEntradaRepository.delete(transacaoEntrada);
+        return transacaoEntradaMapper.toTransacaoEntradaResponseDTO(transacaoEntrada);
     }
 
     private TransacaoEntrada buscarTransacaoEntradaPorId(Long id) throws Exception {
