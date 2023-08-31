@@ -1,6 +1,9 @@
 package br.com.catalisa.stockz.service;
 
-import br.com.catalisa.stockz.model.Compradores;
+import br.com.catalisa.stockz.exception.EmailDuplicadoException;
+import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
+import br.com.catalisa.stockz.model.Comprador;
+import br.com.catalisa.stockz.model.Fornecedor;
 import br.com.catalisa.stockz.model.dto.CompradoresDTO;
 import br.com.catalisa.stockz.repository.CompradoresRepository;
 import br.com.catalisa.stockz.utils.mapper.CompradoresMapper;
@@ -21,10 +24,10 @@ public class CompradoresService {
 
     public List<CompradoresDTO> listarTodos(){
 
-        List<Compradores> compradoresList = compradoresRepository.findAll();
+        List<Comprador> compradorList = compradoresRepository.findAll();
         List<CompradoresDTO> compradoresDTOList = new ArrayList<>();
-        for (Compradores compradores: compradoresList) {
-            CompradoresDTO compradoresDto = compradoresMapper.toCompradoresDto(compradores);
+        for (Comprador comprador : compradorList) {
+            CompradoresDTO compradoresDto = compradoresMapper.toCompradoresDto(comprador);
             compradoresDTOList.add(compradoresDto);
         }
 
@@ -32,32 +35,22 @@ public class CompradoresService {
     }
 
     public CompradoresDTO listarPorId(Long id) throws Exception {
-
-        Optional<Compradores> compradoresOptional = compradoresRepository.findById(id);
-
-        if (compradoresOptional.isEmpty()){
-            throw new Exception("Comprador não encontrada");
-        }
-        Compradores compradores = compradoresOptional.get();
-        CompradoresDTO compradoresDTO = compradoresMapper.toCompradoresDto(compradores);
-
+        Comprador compradorEncontrado = buscarCompradorPorId(id);
+        CompradoresDTO compradoresDTO = compradoresMapper.toCompradoresDto(compradorEncontrado);
         return compradoresDTO;
     }
 
     public CompradoresDTO criar(CompradoresDTO compradoresDTO){
-        Compradores compradores = compradoresMapper.toCompradores(compradoresDTO);
-        compradoresRepository.save(compradores);
+        Comprador comprador = compradoresMapper.toCompradores(compradoresDTO);
+        validarEmailUnicoComprador(comprador);
+        compradoresRepository.save(comprador);
         return compradoresDTO;
     }
 
     public CompradoresDTO atualizar(Long id, CompradoresDTO compradoresDTO) throws Exception {
 
-        Optional<Compradores> compradoresOptional = compradoresRepository.findById(id);
-        if (compradoresOptional.isEmpty()){
-            throw new Exception("Comprador não encontrada");
-        }
-        Compradores compradores = compradoresOptional.get();
-        CompradoresDTO compradoresDtoRetorno = compradoresMapper.toCompradoresDto(compradores);
+        Comprador compradorEncontrado = buscarCompradorPorId(id);
+        CompradoresDTO compradoresDtoRetorno = compradoresMapper.toCompradoresDto(compradorEncontrado);
 
         if (compradoresDTO.getNome() != null){
             compradoresDtoRetorno.setNome(compradoresDTO.getNome());
@@ -70,11 +63,22 @@ public class CompradoresService {
     }
 
     public void deletar(Long id) throws Exception {
-        Optional<Compradores> compradoresOptional = compradoresRepository.findById(id);
-        if (compradoresOptional.isEmpty()){
-            throw new Exception("Comprador não encontrada");
+        Comprador compradorEncontrado = buscarCompradorPorId(id);
+        compradoresRepository.delete(compradorEncontrado);
+    }
+
+    public void validarEmailUnicoComprador(Comprador comprador)  {
+        Optional<Comprador> compradorExistente = compradoresRepository.findByEmail(comprador.getEmail());
+        if (compradorExistente.isPresent()) {
+            throw new EmailDuplicadoException("Comprador já existente");
         }
-        Compradores compradores = compradoresOptional.get();
-        compradoresRepository.delete(compradores);
+    }
+
+    private Comprador buscarCompradorPorId(Long id) throws Exception {
+        Optional<Comprador> compradoresOptional = compradoresRepository.findById(id);
+        if (compradoresOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Comprador não encontrado");
+        }
+        return compradoresOptional.get();
     }
 }
