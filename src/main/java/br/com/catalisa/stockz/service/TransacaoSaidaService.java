@@ -1,8 +1,13 @@
 package br.com.catalisa.stockz.service;
 
-import br.com.catalisa.stockz.model.Produtos;
+import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
+import br.com.catalisa.stockz.model.Comprador;
+import br.com.catalisa.stockz.model.Estoque;
+import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.TransacaoSaida;
 import br.com.catalisa.stockz.model.dto.TransacaoSaidaDTO;
+import br.com.catalisa.stockz.repository.CompradoresRepository;
+import br.com.catalisa.stockz.repository.EstoqueRepository;
 import br.com.catalisa.stockz.repository.ProdutosRepository;
 import br.com.catalisa.stockz.repository.TransacaoSaidaRepository;
 import br.com.catalisa.stockz.utils.mapper.TransacaoSaidaMapper;
@@ -17,6 +22,12 @@ import java.util.Optional;
 public class TransacaoSaidaService {
     @Autowired
     private TransacaoSaidaRepository transacaoSaidaRepository;
+
+    @Autowired
+    private CompradoresRepository compradoresRepository;
+
+    @Autowired
+    private EstoqueRepository estoqueRepository;
 
     @Autowired
     private ProdutosRepository produtosRepository;
@@ -37,43 +48,26 @@ public class TransacaoSaidaService {
     }
 
     public TransacaoSaidaDTO listarPorId(Long id) throws Exception {
-
-        Optional<TransacaoSaida> transacaoSaidaOptional = transacaoSaidaRepository.findById(id);
-
-        if (transacaoSaidaOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
-        }
-        TransacaoSaida transacaoSaida = transacaoSaidaOptional.get();
+        TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
         TransacaoSaidaDTO transacaoSaidaDTO = transacaoSaidaMapper.toTransacaoSaidaDTO(transacaoSaida);
 
         return transacaoSaidaDTO;
     }
 
     public TransacaoSaidaDTO criar(TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
-        Optional<Produtos> produtosOptional = produtosRepository.findById(transacaoSaidaDTO.getProduto().getId());
-        if (produtosOptional.isEmpty()){
-            throw new Exception("Categoria não presente");
-        }
-        TransacaoSaida transacaoSaida = transacaoSaidaMapper.toTransacaoSaida(transacaoSaidaDTO);
-        // salvando a nova quantidade do produto
-        Produtos produtos = produtosOptional.get();
-        if ((produtos.getQuantidade() - transacaoSaidaDTO.getQuantidade()) < 0){
-            throw new Exception("Quantidade de saída inválida");
-        }
-        produtos.setQuantidade(produtos.getQuantidade() - transacaoSaidaDTO.getQuantidade());
-        produtosRepository.save(produtos);
 
-        transacaoSaidaRepository.save(transacaoSaida);
+        Comprador comprador = buscarComprador(transacaoSaidaDTO.getEmailComprador());
+        Produto produto = buscarProduto(transacaoSaidaDTO.getProduto().getId());
+        TransacaoSaida transacaoSaida = criarTransacaoSaida(transacaoSaidaDTO, produto);
+        Estoque estoqueEncontrado = buscarEstoqueDoProduto(produto);
+
+        atualizarEstoque(estoqueEncontrado, transacaoSaida);
+
         return transacaoSaidaDTO;
     }
 
     public TransacaoSaidaDTO atualizar(Long id, TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
-
-        Optional<TransacaoSaida> transacaoSaidaOptional = transacaoSaidaRepository.findById(id);
-        if (transacaoSaidaOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
-        }
-        TransacaoSaida transacaoSaida = transacaoSaidaOptional.get();
+        TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
         TransacaoSaidaDTO fornecedoresDTORetorno = transacaoSaidaMapper.toTransacaoSaidaDTO(transacaoSaida);
 
         if (transacaoSaidaDTO.getProduto() != null){
@@ -82,19 +76,54 @@ public class TransacaoSaidaService {
         if (transacaoSaidaDTO.getQuantidade() != null){
             fornecedoresDTORetorno.setQuantidade(transacaoSaidaDTO.getQuantidade());
         }
-        if (transacaoSaidaDTO.getComprador() != null){
-            fornecedoresDTORetorno.setComprador(transacaoSaidaDTO.getComprador());
+        if (transacaoSaidaDTO.getEmailComprador() != null){
+            fornecedoresDTORetorno.setEmailComprador(transacaoSaidaDTO.getEmailComprador());
         }
 
         return fornecedoresDTORetorno;
     }
 
     public void deletar(Long id) throws Exception {
-        Optional<TransacaoSaida> transacaoSaidaOptional = transacaoSaidaRepository.findById(id);
-        if (transacaoSaidaOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
-        }
-        TransacaoSaida transacaoSaida = transacaoSaidaOptional.get();
+        TransacaoSaida transacaoSaida = buscarTransacaoSaidaPorId(id);
         transacaoSaidaRepository.delete(transacaoSaida);
+    }
+
+    private TransacaoSaida buscarTransacaoSaidaPorId(Long id) throws Exception {
+        Optional<TransacaoSaida> transacaoSaidaOptional = transacaoSaidaRepository.findById(id);
+
+        if (transacaoSaidaOptional.isEmpty()) {
+            throw new Exception("Transação de saída não encontrada");
+        }
+        return transacaoSaidaOptional.get();
+    }
+
+    private Comprador buscarComprador(String email) throws EntidadeNaoEncontradaException {
+        return compradoresRepository.findByEmail(email)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Comprador não encontrado"));
+    }
+
+    private Produto buscarProduto(Long produtoId) throws Exception {
+        return produtosRepository.findById(produtoId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado"));
+    }
+
+    private TransacaoSaida criarTransacaoSaida(TransacaoSaidaDTO transacaoSaidaDTO, Produto produto) throws Exception {
+        TransacaoSaida transacaoSaida = transacaoSaidaMapper.toTransacaoSaida(transacaoSaidaDTO);
+        transacaoSaida.setEstoque(buscarEstoqueDoProduto(produto));
+        return transacaoSaida;
+    }
+
+    private Estoque buscarEstoqueDoProduto(Produto produto) throws Exception {
+        return estoqueRepository.findByProduto(produto)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Estoque não presente"));
+    }
+
+    private void atualizarEstoque(Estoque estoque, TransacaoSaida transacaoSaida) {
+        estoque.setQuantidade(estoque.getQuantidade() - transacaoSaida.getQuantidade());
+        estoque.getTransacoes().add(transacaoSaida);
+
+        produtosRepository.save(estoque.getProduto());
+        estoqueRepository.save(estoque);
+        transacaoSaidaRepository.save(transacaoSaida);
     }
 }

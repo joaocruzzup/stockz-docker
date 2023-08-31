@@ -1,8 +1,6 @@
 package br.com.catalisa.stockz.model.dto;
 
-import br.com.catalisa.stockz.model.Compradores;
-import br.com.catalisa.stockz.model.Fornecedores;
-import br.com.catalisa.stockz.model.Produtos;
+import br.com.catalisa.stockz.model.Produto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,9 +17,9 @@ import java.time.LocalDateTime;
 public class TransacaoSaidaDTO {
     private Integer quantidade;
 
-    private Produtos produto;
+    private Produto produto;
 
-    private Compradores comprador;
+    private String emailComprador;
 
     @JsonIgnore
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
