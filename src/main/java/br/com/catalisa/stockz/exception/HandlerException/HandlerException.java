@@ -1,6 +1,7 @@
 package br.com.catalisa.stockz.exception.HandlerException;
 
 import br.com.catalisa.stockz.exception.AtributoNaoPreenchidoException;
+import br.com.catalisa.stockz.exception.EmailDuplicadoException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,11 @@ public class HandlerException {
 
     @ExceptionHandler(AtributoNaoPreenchidoException.class)
     public ResponseEntity<String> handleTransacaoInvalidaException(AtributoNaoPreenchidoException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(EmailDuplicadoException.class)
+    public ResponseEntity<String> handleEmailDuplicadoException(EmailDuplicadoException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
