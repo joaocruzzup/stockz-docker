@@ -1,7 +1,6 @@
 package br.com.catalisa.stockz.model.dto;
 
-import br.com.catalisa.stockz.model.Fornecedores;
-import br.com.catalisa.stockz.model.Produtos;
+import br.com.catalisa.stockz.model.Produto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Getter
@@ -20,9 +18,9 @@ public class TransacaoEntradaDTO {
 
     private Integer quantidade;
 
-    private Produtos produto;
+    private Produto produto;
 
-    private Fornecedores fornecedor;
+    private String emailFornecedor;
 
     @JsonIgnore
     @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss")
