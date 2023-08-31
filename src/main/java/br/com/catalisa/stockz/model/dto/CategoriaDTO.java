@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FornecedoresDTO {
+public class CategoriaDTO {
     private String nome;
-
-    private String email;
 }

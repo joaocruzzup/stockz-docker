@@ -6,9 +6,9 @@ import br.com.catalisa.stockz.model.Estoque;
 import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.TransacaoSaida;
 import br.com.catalisa.stockz.model.dto.TransacaoSaidaDTO;
-import br.com.catalisa.stockz.repository.CompradoresRepository;
+import br.com.catalisa.stockz.repository.CompradorRepository;
 import br.com.catalisa.stockz.repository.EstoqueRepository;
-import br.com.catalisa.stockz.repository.ProdutosRepository;
+import br.com.catalisa.stockz.repository.ProdutoRepository;
 import br.com.catalisa.stockz.repository.TransacaoSaidaRepository;
 import br.com.catalisa.stockz.utils.mapper.TransacaoSaidaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,13 @@ public class TransacaoSaidaService {
     private TransacaoSaidaRepository transacaoSaidaRepository;
 
     @Autowired
-    private CompradoresRepository compradoresRepository;
+    private CompradorRepository compradorRepository;
 
     @Autowired
     private EstoqueRepository estoqueRepository;
 
     @Autowired
-    private ProdutosRepository produtosRepository;
+    private ProdutoRepository produtoRepository;
 
     @Autowired
     private TransacaoSaidaMapper transacaoSaidaMapper;
@@ -98,12 +98,12 @@ public class TransacaoSaidaService {
     }
 
     private Comprador buscarComprador(String email) throws EntidadeNaoEncontradaException {
-        return compradoresRepository.findByEmail(email)
+        return compradorRepository.findByEmail(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Comprador não encontrado"));
     }
 
     private Produto buscarProduto(Long produtoId) throws Exception {
-        return produtosRepository.findById(produtoId)
+        return produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado"));
     }
 
@@ -122,7 +122,7 @@ public class TransacaoSaidaService {
         estoque.setQuantidade(estoque.getQuantidade() - transacaoSaida.getQuantidade());
         estoque.getTransacoes().add(transacaoSaida);
 
-        produtosRepository.save(estoque.getProduto());
+        produtoRepository.save(estoque.getProduto());
         estoqueRepository.save(estoque);
         transacaoSaidaRepository.save(transacaoSaida);
     }

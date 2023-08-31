@@ -4,7 +4,7 @@ import br.com.catalisa.stockz.enums.TipoTransacao;
 import br.com.catalisa.stockz.model.Comprador;
 import br.com.catalisa.stockz.model.TransacaoSaida;
 import br.com.catalisa.stockz.model.dto.TransacaoSaidaDTO;
-import br.com.catalisa.stockz.repository.CompradoresRepository;
+import br.com.catalisa.stockz.repository.CompradorRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class TransacaoSaidaMapper {
 
     @Autowired
-    private CompradoresRepository compradoresRepository;
+    private CompradorRepository compradorRepository;
     public TransacaoSaidaDTO toTransacaoSaidaDTO(TransacaoSaida transacaoSaida){
         TransacaoSaidaDTO transacaoSaidaDTO = new TransacaoSaidaDTO();
         BeanUtils.copyProperties(transacaoSaida, transacaoSaidaDTO);
@@ -24,7 +24,7 @@ public class TransacaoSaidaMapper {
         transacaoSaida.setDataHora(transacaoSaidaDTO.getDataHora());
         transacaoSaida.setQuantidade(transacaoSaidaDTO.getQuantidade());
 
-        Comprador comprador = compradoresRepository.findByEmail(transacaoSaidaDTO.getEmailComprador()).get();
+        Comprador comprador = compradorRepository.findByEmail(transacaoSaidaDTO.getEmailComprador()).get();
         transacaoSaida.setUsuario(comprador);
         transacaoSaida.setComprador(comprador);
 

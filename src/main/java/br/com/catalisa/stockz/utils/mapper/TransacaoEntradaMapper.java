@@ -5,8 +5,8 @@ import br.com.catalisa.stockz.model.Fornecedor;
 import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.TransacaoEntrada;
 import br.com.catalisa.stockz.model.dto.TransacaoEntradaDTO;
-import br.com.catalisa.stockz.repository.FornecedoresRepository;
-import br.com.catalisa.stockz.repository.ProdutosRepository;
+import br.com.catalisa.stockz.repository.FornecedorRepository;
+import br.com.catalisa.stockz.repository.ProdutoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,10 +17,10 @@ import java.util.Optional;
 public class TransacaoEntradaMapper {
 
     @Autowired
-    private FornecedoresRepository fornecedoresRepository;
+    private FornecedorRepository fornecedorRepository;
 
     @Autowired
-    private ProdutosRepository produtosRepository;
+    private ProdutoRepository produtoRepository;
 
     public TransacaoEntradaDTO toTransacaoEntradaDTO(TransacaoEntrada transacaoEntrada){
         TransacaoEntradaDTO transacaoEntradaDTO = new TransacaoEntradaDTO();
@@ -33,11 +33,11 @@ public class TransacaoEntradaMapper {
         transacaoEntrada.setDataHora(transacaoEntradaDTO.getDataHora());
         transacaoEntrada.setQuantidade(transacaoEntradaDTO.getQuantidade());
 
-        Fornecedor fornecedor = fornecedoresRepository.findByEmail(transacaoEntradaDTO.getEmailFornecedor()).get();
+        Fornecedor fornecedor = fornecedorRepository.findByEmail(transacaoEntradaDTO.getEmailFornecedor()).get();
         transacaoEntrada.setUsuario(fornecedor);
         transacaoEntrada.setFornecedor(fornecedor);
 
-        Optional<Produto> produtoOptional = produtosRepository.findById(transacaoEntradaDTO.getProduto().getId());
+        Optional<Produto> produtoOptional = produtoRepository.findById(transacaoEntradaDTO.getProduto().getId());
         Produto produto = produtoOptional.get();
 
         transacaoEntrada.setProduto(produto);
