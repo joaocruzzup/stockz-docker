@@ -1,6 +1,7 @@
 package br.com.catalisa.stockz.service;
 
-import br.com.catalisa.stockz.model.Fornecedores;
+import br.com.catalisa.stockz.exception.EmailDuplicadoException;
+import br.com.catalisa.stockz.model.Fornecedor;
 import br.com.catalisa.stockz.model.dto.FornecedoresDTO;
 import br.com.catalisa.stockz.repository.FornecedoresRepository;
 import br.com.catalisa.stockz.utils.mapper.FornecedoresMapper;
@@ -21,10 +22,10 @@ public class FornecedoresService {
 
     public List<FornecedoresDTO> listarTodos(){
 
-        List<Fornecedores> fornecedoresList = fornecedoresRepository.findAll();
+        List<Fornecedor> fornecedorList = fornecedoresRepository.findAll();
         List<FornecedoresDTO> fornecedoresDTOList = new ArrayList<>();
-        for (Fornecedores fornecedores: fornecedoresList) {
-            FornecedoresDTO fornecedoresDTO = fornecedoresMapper.toFornecedoresDTO(fornecedores);
+        for (Fornecedor fornecedor : fornecedorList) {
+            FornecedoresDTO fornecedoresDTO = fornecedoresMapper.toFornecedoresDTO(fornecedor);
             fornecedoresDTOList.add(fornecedoresDTO);
         }
 
@@ -32,32 +33,23 @@ public class FornecedoresService {
     }
 
     public FornecedoresDTO listarPorId(Long id) throws Exception {
-
-        Optional<Fornecedores> fornecedoresOptional = fornecedoresRepository.findById(id);
-
-        if (fornecedoresOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
-        }
-        Fornecedores fornecedores = fornecedoresOptional.get();
-        FornecedoresDTO fornecedoresDTO = fornecedoresMapper.toFornecedoresDTO(fornecedores);
+        Fornecedor fornecedorEncontrado = buscarFornecedorPorId(id);
+        FornecedoresDTO fornecedoresDTO = fornecedoresMapper.toFornecedoresDTO(fornecedorEncontrado);
 
         return fornecedoresDTO;
     }
 
     public FornecedoresDTO criar(FornecedoresDTO fornecedoresDTO){
-        Fornecedores fornecedores = fornecedoresMapper.toFornecedores(fornecedoresDTO);
-        fornecedoresRepository.save(fornecedores);
+        Fornecedor fornecedor = fornecedoresMapper.toFornecedores(fornecedoresDTO);
+        validarEmailUnicoFornecedor(fornecedor);
+        fornecedoresRepository.save(fornecedor);
         return fornecedoresDTO;
     }
 
     public FornecedoresDTO atualizar(Long id, FornecedoresDTO fornecedoresDTO) throws Exception {
 
-        Optional<Fornecedores> fornecedoresOptional = fornecedoresRepository.findById(id);
-        if (fornecedoresOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
-        }
-        Fornecedores fornecedores = fornecedoresOptional.get();
-        FornecedoresDTO fornecedoresDTORetorno = fornecedoresMapper.toFornecedoresDTO(fornecedores);
+        Fornecedor fornecedorEncontrado = buscarFornecedorPorId(id);
+        FornecedoresDTO fornecedoresDTORetorno = fornecedoresMapper.toFornecedoresDTO(fornecedorEncontrado);
 
         if (fornecedoresDTO.getNome() != null){
             fornecedoresDTORetorno.setNome(fornecedoresDTO.getNome());
@@ -70,12 +62,23 @@ public class FornecedoresService {
     }
 
     public void deletar(Long id) throws Exception {
-        Optional<Fornecedores> fornecedoresOptional = fornecedoresRepository.findById(id);
-        if (fornecedoresOptional.isEmpty()){
-            throw new Exception("Fornecedor não encontrada");
+        Fornecedor fornecedorEncontrado = buscarFornecedorPorId(id);
+        fornecedoresRepository.delete(fornecedorEncontrado);
+    }
+
+    private Fornecedor buscarFornecedorPorId(Long id) throws Exception {
+        Optional<Fornecedor> fornecedoresOptional = fornecedoresRepository.findById(id);
+        if (fornecedoresOptional.isEmpty()) {
+            throw new Exception("Fornecedor não encontrado");
         }
-        Fornecedores fornecedores = fornecedoresOptional.get();
-        fornecedoresRepository.delete(fornecedores);
+        return fornecedoresOptional.get();
+    }
+
+    public void validarEmailUnicoFornecedor(Fornecedor fornecedor)  {
+        Optional<Fornecedor> fornecedorExistente = fornecedoresRepository.findByEmail(fornecedor.getEmail());
+        if (fornecedorExistente.isPresent()) {
+            throw new EmailDuplicadoException("Fornecedor já existente");
+        }
     }
 
 }
