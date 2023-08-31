@@ -179,7 +179,7 @@ public class CategoriaControllerTest {
         doThrow(new EntidadeNaoEncontradaException("Categoria não encontrada"))
                 .when(categoriaService).deletar(1L);
 
-        mockMvc.perform(delete("/api/caegorias/{id}", 1L))
+        mockMvc.perform(delete("/api/categorias/{id}", 1L))
                 .andDo(print())
                 .andExpect(status().isNotFound());
 
