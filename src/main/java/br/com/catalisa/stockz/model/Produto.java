@@ -38,23 +38,4 @@ public class Produto {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-//    @JsonIgnore
-//    @OneToMany
-//    private List<TransacaoEntrada> transacoesEntrada;
-//
-//    @JsonIgnore
-//    @OneToMany
-//    private List<TransacaoSaida> transacoesSaida;
-
-//    @JsonIgnore
-//    @ManyToMany
-//    @JoinTable(
-//            name = "produto_fornecedor",
-//            joinColumns = @JoinColumn(name = "produto_id"),
-//            inverseJoinColumns = @JoinColumn(name = "fornecedor_id")
-//    )
-//    private List<Fornecedores> fornecedores;
-//
-//    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
-//    private List<Transacoes> transacoes;
 }

@@ -22,7 +22,6 @@ public class Categoria {
     @Column(nullable = false)
     private String nome;
 
-    //ToDo estudar como utilizar melhor a lista de produtos
     @JsonIgnore
     @OneToMany(mappedBy = "categoria")
     private List<Produto> produtos;
