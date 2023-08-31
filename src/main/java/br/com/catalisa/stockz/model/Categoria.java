@@ -14,15 +14,16 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Categorias {
+public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     //ToDo estudar como utilizar melhor a lista de produtos
     @JsonIgnore
     @OneToMany(mappedBy = "categoria")
-    private List<Produtos> produtos;
+    private List<Produto> produtos;
 }

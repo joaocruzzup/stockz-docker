@@ -1,7 +1,8 @@
 package br.com.catalisa.stockz.service;
 
-import br.com.catalisa.stockz.model.Categorias;
-import br.com.catalisa.stockz.model.Produtos;
+import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
+import br.com.catalisa.stockz.model.Categoria;
+import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.dto.CategoriasDTO;
 import br.com.catalisa.stockz.repository.CategoriasRepository;
 import br.com.catalisa.stockz.repository.ProdutosRepository;
@@ -26,10 +27,10 @@ public class CategoriasService {
 
     public List<CategoriasDTO> listarTodos(){
 
-        List<Categorias> categoriasList = categoriasRepository.findAll();
+        List<Categoria> categoriaList = categoriasRepository.findAll();
         List<CategoriasDTO> categoriasDTOList = new ArrayList<>();
-        for (Categorias categorias: categoriasList) {
-            CategoriasDTO categoriasDTO = categoriasMapper.toCategoriasDto(categorias);
+        for (Categoria categoria : categoriaList) {
+            CategoriasDTO categoriasDTO = categoriasMapper.toCategoriasDto(categoria);
             categoriasDTOList.add(categoriasDTO);
         }
 
@@ -37,31 +38,19 @@ public class CategoriasService {
     }
 
     public CategoriasDTO listarPorId(Long id) throws Exception {
-
-        Optional<Categorias> categoriasOptional = categoriasRepository.findById(id);
-
-        if (categoriasOptional.isEmpty()){
-            throw new Exception("Categoria não encontrada");
-        }
-        Categorias categorias = categoriasOptional.get();
-        CategoriasDTO categoriasDTO = categoriasMapper.toCategoriasDto(categorias);
-
+        Categoria categoriaEncontrada = buscarCategoriaPorId(id);
+        CategoriasDTO categoriasDTO = categoriasMapper.toCategoriasDto(categoriaEncontrada);
         return categoriasDTO;
     }
 
     public CategoriasDTO criar(CategoriasDTO categoriasDTO){
-        Categorias categorias = categoriasMapper.toCategorias(categoriasDTO);
-        categoriasRepository.save(categorias);
+        Categoria categoria = categoriasMapper.toCategorias(categoriasDTO);
+        categoriasRepository.save(categoria);
         return categoriasDTO;
     }
 
     public CategoriasDTO atualizar(Long id, CategoriasDTO categoriasDTO) throws Exception {
-
-        Optional<Categorias> categoriasOptional = categoriasRepository.findById(id);
-        if (categoriasOptional.isEmpty()){
-            throw new Exception("Categoria não encontrada");
-        }
-        Categorias categoriaEncontrada = categoriasOptional.get();
+        Categoria categoriaEncontrada = buscarCategoriaPorId(id);
 
         if (categoriasDTO.getNome() != null){
             categoriaEncontrada.setNome(categoriasDTO.getNome());
@@ -73,18 +62,22 @@ public class CategoriasService {
     }
 
     public void deletar(Long id) throws Exception {
-        Optional<Categorias> categoriasOptional = categoriasRepository.findById(id);
-        if (categoriasOptional.isEmpty()){
-            throw new Exception("Categoria não encontrada");
-        }
-        Categorias categoriaEncontrada = categoriasOptional.get();
+        Categoria categoriaEncontrada = buscarCategoriaPorId(id);
 
-        Optional<Produtos> produtosOptional = produtosRepository.findByCategoria(categoriaEncontrada);
+        Optional<Produto> produtosOptional = produtosRepository.findByCategoria(categoriaEncontrada);
         if (produtosOptional.isPresent()){
             throw new Exception(("Categoria atrelada a um produto. Atualize primeiro a categoria do produto"));
         }
 
         categoriasRepository.delete(categoriaEncontrada);
+    }
+
+    private Categoria buscarCategoriaPorId(Long id) throws EntidadeNaoEncontradaException {
+        Optional<Categoria> categoriasOptional = categoriasRepository.findById(id);
+        if (categoriasOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Categoria não encontrada");
+        }
+        return categoriasOptional.get();
     }
 
 }
