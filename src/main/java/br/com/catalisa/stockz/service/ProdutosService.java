@@ -41,14 +41,20 @@ public class ProdutosService {
         return produtosDTOList;
     }
 
-    public ProdutosDTO listarPorId(Long id) throws Exception {
+    public ProdutosDTO listarPorId(Long id) {
         Produto produtoEncontrado = buscarProdutoPorId(id);
         ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtoEncontrado);
         return produtosDTO;
     }
 
+    public ProdutosDTO listarPorNome(String nome){
+        Produto produtoEncontrado = buscarProdutoPorNome(nome);
+        ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtoEncontrado);
+        return produtosDTO;
+    }
+
     //ToDo tentar mudar a categoria
-    public ProdutosDTO criar(ProdutosDTO produtosDTO) throws Exception {
+    public ProdutosDTO criar(ProdutosDTO produtosDTO) {
         Optional<Categoria> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
         if (categoriaOptional.isEmpty()){
             throw new AtributoNaoPreenchidoException("Atributo categoria preenchido incorretamente");
@@ -59,7 +65,7 @@ public class ProdutosService {
         return produtosDTO;
     }
 
-    public ProdutosDTO atualizar(Long id, ProdutosDTO produtosDTO) throws Exception {
+    public ProdutosDTO atualizar(Long id, ProdutosDTO produtosDTO) {
         Produto produtoEncontrado = buscarProdutoPorId(id);
 
         if (produtosDTO.getNome() != null){
@@ -83,7 +89,7 @@ public class ProdutosService {
         return produtosMapper.toProdutosDTO(produtoEncontrado);
     }
 
-    public void deletar(Long id) throws Exception {
+    public void deletar(Long id) {
         Optional<Produto> produtosOptional = produtosRepository.findById(id);
         if (produtosOptional.isEmpty()){
             throw new EntidadeNaoEncontradaException("Produto não encontrado");
@@ -93,8 +99,17 @@ public class ProdutosService {
         produtosRepository.delete(produto);
     }
 
-    private Produto buscarProdutoPorId(Long id) throws EntidadeNaoEncontradaException {
+    private Produto buscarProdutoPorId(Long id) {
         Optional<Produto> produtosOptional = produtosRepository.findById(id);
+
+        if (produtosOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
+        }
+        return produtosOptional.get();
+    }
+
+    private Produto buscarProdutoPorNome(String nome) {
+        Optional<Produto> produtosOptional = produtosRepository.findByNome(nome);
 
         if (produtosOptional.isEmpty()) {
             throw new EntidadeNaoEncontradaException("Produto não encontrado");

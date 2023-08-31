@@ -21,24 +21,29 @@ public class ProdutosController {
     }
 
     @GetMapping(path = "{id}")
-    ResponseEntity<ProdutosDTO> listarPorId(@PathVariable Long id) throws Exception {
+    ResponseEntity<ProdutosDTO> listarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(produtosService.listarPorId(id));
     }
 
+    @GetMapping(path = "/nome/{nome}")
+    ResponseEntity<ProdutosDTO> listarPorId(@PathVariable String nome)  {
+        return ResponseEntity.ok(produtosService.listarPorNome(nome));
+    }
+
     @PostMapping
-    ResponseEntity<ProdutosDTO> criar(@RequestBody ProdutosDTO produtosDTO) throws Exception {
+    ResponseEntity<ProdutosDTO> criar(@RequestBody ProdutosDTO produtosDTO)  {
         ProdutosDTO novoProduto = produtosService.criar(produtosDTO);
         return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "{id}")
-    ResponseEntity<ProdutosDTO> atualizar(@PathVariable Long id, @RequestBody ProdutosDTO produtosDTO) throws Exception {
+    ResponseEntity<ProdutosDTO> atualizar(@PathVariable Long id, @RequestBody ProdutosDTO produtosDTO) {
         ProdutosDTO produtosDTOAtualizados = produtosService.atualizar(id, produtosDTO);
         return ResponseEntity.ok(produtosDTOAtualizados);
     }
 
     @DeleteMapping(path = "{id}")
-    ResponseEntity<Void> deletar(@PathVariable Long id) throws Exception {
+    ResponseEntity<Void> deletar(@PathVariable Long id) {
         produtosService.deletar(id);
         return ResponseEntity.ok().build();
     }
