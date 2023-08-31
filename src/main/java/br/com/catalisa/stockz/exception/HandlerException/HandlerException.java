@@ -1,6 +1,7 @@
 package br.com.catalisa.stockz.exception.HandlerException;
 
 import br.com.catalisa.stockz.exception.AtributoNaoPreenchidoException;
+import br.com.catalisa.stockz.exception.CategoriaJaCadastradaException;
 import br.com.catalisa.stockz.exception.EmailDuplicadoException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,11 @@ public class HandlerException {
 
     @ExceptionHandler(EmailDuplicadoException.class)
     public ResponseEntity<String> handleEmailDuplicadoException(EmailDuplicadoException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(CategoriaJaCadastradaException.class)
+    public ResponseEntity<String> handleCategoriaJaCadastradaException(CategoriaJaCadastradaException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 

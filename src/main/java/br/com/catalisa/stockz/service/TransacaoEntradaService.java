@@ -3,8 +3,8 @@ package br.com.catalisa.stockz.service;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.*;
 import br.com.catalisa.stockz.model.dto.TransacaoEntradaDTO;
-import br.com.catalisa.stockz.repository.FornecedoresRepository;
-import br.com.catalisa.stockz.repository.ProdutosRepository;
+import br.com.catalisa.stockz.repository.FornecedorRepository;
+import br.com.catalisa.stockz.repository.ProdutoRepository;
 import br.com.catalisa.stockz.repository.TransacaoEntradaRepository;
 import br.com.catalisa.stockz.utils.mapper.TransacaoEntradaMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class TransacaoEntradaService {
     private TransacaoEntradaRepository transacaoEntradaRepository;
 
     @Autowired
-    private ProdutosRepository produtosRepository;
+    private ProdutoRepository produtoRepository;
 
     @Autowired
     private TransacaoEntradaMapper transacaoEntradaMapper;
@@ -29,7 +29,7 @@ public class TransacaoEntradaService {
     private EstoqueService estoqueService;
 
     @Autowired
-    private FornecedoresRepository fornecedoresRepository;
+    private FornecedorRepository fornecedorRepository;
 
     public List<TransacaoEntradaDTO> listarTodos(){
 
@@ -57,7 +57,7 @@ public class TransacaoEntradaService {
 
         estoqueService.adicionarEstoque(transacaoEntrada);
 
-        produtosRepository.save(produto);
+        produtoRepository.save(produto);
         transacaoEntradaRepository.save(transacaoEntrada);
 
         return transacaoEntradaDTO;
@@ -94,7 +94,7 @@ public class TransacaoEntradaService {
     }
 
     private Fornecedor buscarFornecedor(String email) throws EntidadeNaoEncontradaException {
-        return fornecedoresRepository.findByEmail(email)
+        return fornecedorRepository.findByEmail(email)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Fornecedor não encontrado"));
     }
 
@@ -105,7 +105,7 @@ public class TransacaoEntradaService {
     }
 
     private Produto buscarProduto(Long produtoId) throws Exception {
-        return produtosRepository.findById(produtoId)
+        return produtoRepository.findById(produtoId)
                 .orElseThrow(() -> new Exception("Produto não encontrado"));
     }
 

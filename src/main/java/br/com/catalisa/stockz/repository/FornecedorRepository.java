@@ -1,13 +1,13 @@
 package br.com.catalisa.stockz.repository;
 
-import br.com.catalisa.stockz.model.Comprador;
+import br.com.catalisa.stockz.model.Fornecedor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface CompradoresRepository extends JpaRepository<Comprador, Long> {
-    Optional<Comprador> findByEmail(String email);
+public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
+    Optional<Fornecedor> findByEmail(String email);
 
 }
