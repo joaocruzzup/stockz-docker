@@ -3,8 +3,8 @@ package br.com.catalisa.stockz.service;
 import br.com.catalisa.stockz.enums.StatusProduto;
 import br.com.catalisa.stockz.exception.AtributoNaoPreenchidoException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
-import br.com.catalisa.stockz.model.Categorias;
-import br.com.catalisa.stockz.model.Produtos;
+import br.com.catalisa.stockz.model.Categoria;
+import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.dto.ProdutosDTO;
 import br.com.catalisa.stockz.repository.CategoriasRepository;
 import br.com.catalisa.stockz.repository.ProdutosRepository;
@@ -29,11 +29,11 @@ public class ProdutosService {
 
     public List<ProdutosDTO> listarTodos(){
 
-        List<Produtos> produtosList = produtosRepository.findAll();
+        List<Produto> produtoList = produtosRepository.findAll();
         List<ProdutosDTO> produtosDTOList = new ArrayList<>();
-        for (Produtos produtos: produtosList) {
-            if (produtos.getStatusProduto() == StatusProduto.ATIVO){
-                ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
+        for (Produto produto : produtoList) {
+            if (produto.getStatusProduto() == StatusProduto.ATIVO){
+                ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produto);
                 produtosDTOList.add(produtosDTO);
             }
         }
@@ -42,38 +42,25 @@ public class ProdutosService {
     }
 
     public ProdutosDTO listarPorId(Long id) throws Exception {
-
-        Optional<Produtos> produtosOptional = produtosRepository.findById(id);
-
-        if (produtosOptional.isEmpty() || produtosOptional.get().getStatusProduto() == StatusProduto.INATIVO){
-            throw new EntidadeNaoEncontradaException("Produto não encontrado");
-        }
-        Produtos produtos = produtosOptional.get();
-        ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtos);
-
+        Produto produtoEncontrado = buscarProdutoPorId(id);
+        ProdutosDTO produtosDTO = produtosMapper.toProdutosDTO(produtoEncontrado);
         return produtosDTO;
     }
 
     //ToDo tentar mudar a categoria
     public ProdutosDTO criar(ProdutosDTO produtosDTO) throws Exception {
-        Optional<Categorias> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
+        Optional<Categoria> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
         if (categoriaOptional.isEmpty()){
             throw new AtributoNaoPreenchidoException("Atributo categoria preenchido incorretamente");
         }
-        produtosDTO.setQuantidade(0);
-        Produtos produtos = produtosMapper.toProdutos(produtosDTO);
-        produtosRepository.save(produtos);
+        Produto produto = produtosMapper.toProdutos(produtosDTO);
+        produtosRepository.save(produto);
         produtosDTO.setCategoria(categoriaOptional.get());
         return produtosDTO;
     }
 
     public ProdutosDTO atualizar(Long id, ProdutosDTO produtosDTO) throws Exception {
-
-        Optional<Produtos> produtosOptional = produtosRepository.findById(id);
-        if (produtosOptional.isEmpty()){
-            throw new EntidadeNaoEncontradaException("Produto não encontrado");
-        }
-        Produtos produtoEncontrado = produtosOptional.get();
+        Produto produtoEncontrado = buscarProdutoPorId(id);
 
         if (produtosDTO.getNome() != null){
             produtoEncontrado.setNome(produtosDTO.getNome());
@@ -85,7 +72,7 @@ public class ProdutosService {
             produtoEncontrado.setDescricao(produtosDTO.getDescricao());
         }
         if (produtosDTO.getCategoria().getId() != null){
-            Optional<Categorias> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
+            Optional<Categoria> categoriaOptional = categoriasRepository.findById(produtosDTO.getCategoria().getId());
             if (categoriaOptional.isEmpty()){
                 throw new EntidadeNaoEncontradaException("Categoria não encontrada");
             }
@@ -97,12 +84,22 @@ public class ProdutosService {
     }
 
     public void deletar(Long id) throws Exception {
-        Optional<Produtos> produtosOptional = produtosRepository.findById(id);
+        Optional<Produto> produtosOptional = produtosRepository.findById(id);
         if (produtosOptional.isEmpty()){
             throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
-        Produtos produtos = produtosOptional.get();
-        produtos.setStatusProduto(StatusProduto.INATIVO);
-        produtosRepository.delete(produtos);
+        Produto produto = produtosOptional.get();
+        produto.setStatusProduto(StatusProduto.INATIVO);
+        produtosRepository.delete(produto);
     }
+
+    private Produto buscarProdutoPorId(Long id) throws EntidadeNaoEncontradaException {
+        Optional<Produto> produtosOptional = produtosRepository.findById(id);
+
+        if (produtosOptional.isEmpty()) {
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
+        }
+        return produtosOptional.get();
+    }
+
 }

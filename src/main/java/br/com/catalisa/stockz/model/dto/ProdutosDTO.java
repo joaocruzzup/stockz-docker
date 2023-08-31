@@ -1,6 +1,6 @@
 package br.com.catalisa.stockz.model.dto;
 
-import br.com.catalisa.stockz.model.Categorias;
+import br.com.catalisa.stockz.model.Categoria;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +18,8 @@ public class ProdutosDTO {
 
     private String descricao;
 
-    private Categorias categoria;
+    private Categoria categoria;
 
     private BigDecimal preco;
-
-    @PositiveOrZero
-    private Integer quantidade;
 
 }

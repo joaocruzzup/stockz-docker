@@ -1,7 +1,5 @@
 package br.com.catalisa.stockz.controller;
 
-import br.com.catalisa.stockz.model.Produtos;
-import br.com.catalisa.stockz.model.dto.CompradoresDTO;
 import br.com.catalisa.stockz.model.dto.ProdutosDTO;
 import br.com.catalisa.stockz.service.ProdutosService;
 import org.springframework.beans.factory.annotation.Autowired;

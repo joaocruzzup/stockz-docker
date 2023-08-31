@@ -17,34 +17,34 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Produtos {
+public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     private String descricao;
 
+    @Column(nullable = false)
     private BigDecimal preco;
 
-    @PositiveOrZero
-    private Integer quantidade;
-
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusProduto statusProduto = StatusProduto.ATIVO;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
-    private Categorias categoria;
+    private Categoria categoria;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "produto")
-    private List<TransacaoEntrada> transacoesEntrada;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "produto")
-    private List<TransacaoSaida> transacoesSaida;
+//    @JsonIgnore
+//    @OneToMany
+//    private List<TransacaoEntrada> transacoesEntrada;
+//
+//    @JsonIgnore
+//    @OneToMany
+//    private List<TransacaoSaida> transacoesSaida;
 
 //    @JsonIgnore
 //    @ManyToMany
