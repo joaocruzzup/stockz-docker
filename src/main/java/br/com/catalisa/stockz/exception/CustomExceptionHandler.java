@@ -2,6 +2,7 @@ package br.com.catalisa.stockz.exception;
 import javax.validation.ConstraintViolation;
 
 import br.com.catalisa.stockz.exception.error.ErrorMessage;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -60,6 +61,13 @@ public class CustomExceptionHandler  {
                 .collect(Collectors.toList());
 
         ErrorMessage errorResponse = new ErrorMessage(HttpStatus.BAD_REQUEST,HttpStatus.BAD_REQUEST.value(), message);
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorMessage> handleDataIntegrityViolationException(DataIntegrityViolationException ex ) {
+        String errorMessage = "Não é possível deletar essa entidade por ela estar relacionada a outra";
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.value(), errorMessage);
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
