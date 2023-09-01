@@ -1,5 +1,5 @@
 <h1 align="center">
-💻<br>StockZ API - Gerenciamento de estoques
+💻📊<br>StockZ API - Gerenciamento de estoques
 </h1>
 
 ## Sumário
