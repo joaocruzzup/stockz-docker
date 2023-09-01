@@ -111,31 +111,8 @@ public class CategoriaServiceTest {
         verify(categoriaRepository, times(1)).findByNome(categoriaDTO1.getNome());
     }
 
-//    @Test
-//    @DisplayName("Teste atualizar CategoriaDTO")
-//    public void atualizarCategoriaDTOTest() throws Exception {
-//        Long id = 1L;
-//
-//        when(categoriaRepository.findById(id)).thenReturn(Optional.of(categoria1));
-//        Categoria categoriaAtualizada = new Categoria(id, "nova_categoria", new ArrayList<>());
-//
-//        CategoriaDTO categoriaDTOAtualizada = new CategoriaDTO("nova_categoria");
-//
-//        when(categoriaMapper.toCategorias(categoriaDTOAtualizada)).thenReturn(categoriaAtualizada);
-//
-//        CategoriaDTO resultado = categoriaService.atualizar(id, categoriaDTOAtualizada);
-//
-//        assertEquals(categoriaDTOAtualizada, resultado);
-//
-//        verify(categoriaRepository, times(1)).findById(id);
-//        verify(categoriaRepository, times(1)).save(categoriaAtualizada);
-//        verify(categoriaMapper, times(1)).toCategoriasDto(categoriaAtualizada);
-//
-//        assertEquals(categoriaDTOAtualizada.getNome(), categoriaAtualizada.getNome());
-//    }
-
     @Test
-    public void testDeletarCategoriaExistente() throws Exception {
+    public void DeletarCategoriaExistente() throws Exception {
         Long id = 1L;
 
         when(categoriaRepository.findById(id)).thenReturn(Optional.of(categoria1));
@@ -150,7 +127,7 @@ public class CategoriaServiceTest {
     }
 
     @Test
-    public void testDeletarCategoriaAtreladaAProduto() throws Exception {
+    public void DeletarCategoriaAtreladaAProduto() throws Exception {
         Long id = 1L;
 
         when(categoriaRepository.findById(id)).thenReturn(Optional.of(categoria1));

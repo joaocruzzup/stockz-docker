@@ -128,7 +128,7 @@ public class CompradorServiceTest {
     }
 
     @Test
-    public void testDeletarCompradorExistente() throws Exception {
+    public void DeletarCompradorExistente() throws Exception {
         Long id = 1L;
 
         when(compradorRepository.findById(id)).thenReturn(Optional.of(comprador1));
@@ -139,7 +139,7 @@ public class CompradorServiceTest {
     }
 
     @Test
-    public void testDeletarCompradorNaoExistente() throws Exception {
+    public void DeletarCompradorNaoExistente() throws Exception {
         Long id = 1L;
 
         when(compradorRepository.findById(id)).thenReturn(Optional.empty());

@@ -124,30 +124,8 @@ public class ProdutoServiceTest {
         verify(categoriaRepository, times(1)).findById(categoria.getId());
     }
 
-//    @Test
-//    @DisplayName("Teste atualizar ProdutoDTO")
-//    public void atualizarProdutoDTOTest() {
-//        Long id = 1L;
-//
-//        when(produtoRepository.findById(id)).thenReturn(Optional.of(produto1));
-//        when(categoriaRepository.findById(produtoDTO1.getCategoria().getId())).thenReturn(Optional.of(categoria));;
-//
-//        ProdutoDTO resultado = produtoService.atualizar(id, produtoDTO1);
-//
-//        assertEquals(produtoDTO1, resultado);
-//
-//        verify(produtoRepository).findById(id);
-//        verify(categoriaRepository).findById(produtoDTO1.getCategoria().getId());
-//        verify(produtosMapper).toProdutosDTO(produto1);
-//
-//        assertEquals(produtoDTO1.getNome(), produto1.getNome());
-//        assertEquals(produtoDTO1.getDescricao(), produto1.getDescricao());
-//        assertEquals(produtoDTO1.getPreco(), produto1.getPreco());
-//        assertEquals(produtoDTO1.getCategoria(), produto1.getCategoria());
-//    }
-
     @Test
-    public void testDeletarProdutoExistente() {
+    public void DeletarProdutoExistente() {
         Long id = 1L;
         Produto produto = new Produto();
         produto.setId(id);
@@ -165,7 +143,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void testDeletarProdutoNaoExistente() {
+    public void DeletarProdutoNaoExistente() {
         Long id = 1L;
 
         when(produtoRepository.findById(id)).thenReturn(Optional.empty());
@@ -178,7 +156,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void testBuscarProdutoPorIdExistente() {
+    public void BuscarProdutoPorIdExistente() {
         Long id = 1L;
         Produto produto = new Produto();
         produto.setId(id);
@@ -194,7 +172,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void testBuscarProdutoPorIdNaoExistente() {
+    public void BuscarProdutoPorIdNaoExistente() {
         Long id = 1L;
 
         when(produtoRepository.findById(id)).thenReturn(Optional.empty());
@@ -207,7 +185,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void testBuscarProdutosPorNomeExistente() {
+    public void BuscarProdutosPorNomeExistente() {
         String nome = "Produto1";
         Produto produto1 = new Produto();
         produto1.setNome(nome);
@@ -227,7 +205,7 @@ public class ProdutoServiceTest {
     }
 
     @Test
-    public void testBuscarProdutosPorNomeNaoExistente() {
+    public void BuscarProdutosPorNomeNaoExistente() {
         String nome = "Produto1";
 
         when(produtoRepository.findAllByNome(nome)).thenReturn(new ArrayList<>());

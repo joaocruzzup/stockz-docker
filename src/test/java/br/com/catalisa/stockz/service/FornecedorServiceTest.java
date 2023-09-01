@@ -104,35 +104,6 @@ public class FornecedorServiceTest {
         verify(fornecedorMapper, times(1)).toFornecedores(fornecedorDTO1);
     }
 
-//    @Test
-//    @DisplayName("Criar fornecedor com email duplicado")
-//    public void criarFornecedorDTOComEmailDuplicadoTest() {
-//        Fornecedor fornecedor = new Fornecedor();
-//        fornecedor.setEmail(fornecedorDTO1.getEmail());
-//
-//        when(fornecedorMapper.toFornecedores(fornecedorDTO1)).thenReturn(fornecedor);
-//        when(fornecedorRepository.findByEmail(fornecedor.getEmail())).thenReturn(Optional.of(fornecedor));
-//
-//        assertThrows(EmailDuplicadoException.class, () -> fornecedorService.criar(fornecedorDTO1));
-//
-//        verify(fornecedorRepository, times(1)).findByEmail(fornecedor.getEmail());
-//        verify(fornecedorRepository, never()).save(fornecedor);
-//        verify(fornecedorMapper, times(1)).toFornecedores(fornecedorDTO1);
-//    }
-
-//    @Test
-//    @DisplayName("Atualizar fornecedor por ID")
-//    public void atualizarFornecedorDTOTest() throws Exception {
-//        Long id = 1L;
-//
-//        when(fornecedorRepository.findById(id)).thenReturn(Optional.of(fornecedor1));
-//        when(fornecedorMapper.toFornecedoresDTO(fornecedor1)).thenReturn(fornecedorDTO1);
-//
-//        FornecedorDTO resultado = fornecedorService.atualizar(id, fornecedorDTO1);
-//
-//        assertEquals(fornecedorDTO1, resultado);
-//    }
-
     @Test
     @DisplayName("Deletar fornecedor existente")
     public void deletarFornecedorExistente() throws Exception {
