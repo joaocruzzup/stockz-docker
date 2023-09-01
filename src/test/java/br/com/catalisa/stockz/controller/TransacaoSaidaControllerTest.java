@@ -63,10 +63,7 @@ public class TransacaoSaidaControllerTest {
         transacaoResponse.setProduto(produtoDTOResponse);
         transacaoResponse.setQuantidade(100);
         transacaoResponse.setDataHoraSaida(LocalDateTime.now());
-        transacaoRequest = new TransacaoSaidaDTO();
-        transacaoRequest.setEmailComprador(compradorDTO.getEmail());
-        transacaoRequest.setQuantidade(100);
-        transacaoRequest.setProduto(produtoRequest);
+        transacaoRequest = new TransacaoSaidaDTO(100, produtoRequest, compradorDTO.getEmail(), LocalDateTime.now());
 
     }
 
@@ -111,7 +108,7 @@ public class TransacaoSaidaControllerTest {
 
         when(transacaoSaidaService.criar(Mockito.any())).thenReturn(transacaoResponse);
 
-        String requestJson = objectMapper.writeValueAsString(produtoRequest);
+        String requestJson = objectMapper.writeValueAsString(transacaoRequest);
         String responseJson = objectMapper.writeValueAsString(transacaoResponse);
 
         mockMvc.perform(post("/api/transacao/saida")

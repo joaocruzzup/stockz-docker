@@ -11,6 +11,7 @@
     public class TransacaoEntrada extends Transacao {
 
         @ManyToOne
+        @JoinColumn(name = "fornecedor_id")
         private Fornecedor fornecedor;
 
     }

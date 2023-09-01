@@ -54,8 +54,7 @@ public class TransacaoEntradaControllerTest {
     @BeforeEach
     public void config() {
         categoriaDTO1 = new CategoriaDTO("ferramentas");
-        Categoria categoria = new Categoria();
-        categoria.setNome("ferramentas");
+        Categoria categoria = new Categoria(1L,"ferramentas", new ArrayList<>());
         produtoRequest = new Produto(1L, "computador","30gb ram", BigDecimal.valueOf(300), StatusProduto.ATIVO, categoria);
         produtoDTOResponse = new ProdutoDTOResponse("computador", "30gb ram", categoriaDTO1, BigDecimal.valueOf(300));
         fornecedorDTO = new FornecedorDTO("joao", "joao@example.com");
@@ -64,10 +63,7 @@ public class TransacaoEntradaControllerTest {
         transacaoResponse.setProduto(produtoDTOResponse);
         transacaoResponse.setQuantidade(100);
         transacaoResponse.setDataHoraEntrada(LocalDateTime.now());
-        transacaoRequest = new TransacaoEntradaDTO();
-        transacaoRequest.setEmailFornecedor(fornecedorDTO.getEmail());
-        transacaoRequest.setQuantidade(100);
-        transacaoRequest.setProduto(produtoRequest);
+        transacaoRequest = new TransacaoEntradaDTO(100, produtoRequest, fornecedorDTO.getEmail(), LocalDateTime.now());
 
     }
 
@@ -112,7 +108,7 @@ public class TransacaoEntradaControllerTest {
 
         when(transacaoEntradaService.criar(Mockito.any())).thenReturn(transacaoResponse);
 
-        String requestJson = objectMapper.writeValueAsString(produtoRequest);
+        String requestJson = objectMapper.writeValueAsString(transacaoRequest);
         String responseJson = objectMapper.writeValueAsString(transacaoResponse);
 
         mockMvc.perform(post("/api/transacao/entrada")

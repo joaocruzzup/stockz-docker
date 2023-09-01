@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class TransacaoEntradaController {
     }
 
     @PostMapping
-    ResponseEntity<TransacaoEntradaResponseDTO> criar(@RequestBody TransacaoEntradaDTO transacaoEntradaDTO) throws Exception {
+    ResponseEntity<TransacaoEntradaResponseDTO> criar(@RequestBody @Valid TransacaoEntradaDTO transacaoEntradaDTO) throws Exception {
         TransacaoEntradaResponseDTO novaTransacao = transacaoEntradaService.criar(transacaoEntradaDTO);
         return new ResponseEntity<>(novaTransacao, HttpStatus.CREATED);
     }

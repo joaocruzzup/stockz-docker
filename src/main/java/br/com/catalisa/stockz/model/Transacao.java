@@ -30,13 +30,14 @@ public class Transacao {
     @Enumerated(EnumType.STRING)
     private TipoTransacao tipoTransacao;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Produto produto;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "estoque_id")
     private Estoque estoque;
 
 }

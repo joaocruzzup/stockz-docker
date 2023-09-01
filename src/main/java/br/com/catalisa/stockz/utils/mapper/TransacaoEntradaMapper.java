@@ -43,28 +43,20 @@ public class TransacaoEntradaMapper {
         transacaoEntrada.setDataHora(transacaoEntradaDTO.getDataHora());
         transacaoEntrada.setQuantidade(transacaoEntradaDTO.getQuantidade());
 
+        // Mapeamento do Produto usando o relacionamento
         if (transacaoEntradaDTO.getProduto() != null && transacaoEntradaDTO.getProduto().getId() != null) {
-            Optional<Produto> produtoOptional = produtoRepository.findById(transacaoEntradaDTO.getProduto().getId());
-            Produto produto = produtoOptional.orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado."));
+            Produto produto = produtoRepository.findById(transacaoEntradaDTO.getProduto().getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado."));
             transacaoEntrada.setProduto(produto);
-        } else {
-            Produto novoProduto = new Produto();
-            novoProduto.setNome(transacaoEntradaDTO.getProduto().getNome());
-            novoProduto.setDescricao(transacaoEntradaDTO.getProduto().getDescricao());
-            novoProduto.setPreco(transacaoEntradaDTO.getProduto().getPreco());
-            novoProduto.setStatusProduto(StatusProduto.ATIVO);
-
-
-            Produto produtoSalvo = produtoRepository.save(novoProduto);
-            transacaoEntrada.setProduto(produtoSalvo);
         }
 
-        // Associar o fornecedor à Transacao
+        // Mapeamento do Fornecedor usando o relacionamento
         Fornecedor fornecedor = fornecedorRepository.findByEmail(transacaoEntradaDTO.getEmailFornecedor())
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Fornecedor não encontrado."));
-        transacaoEntrada.setUsuario(fornecedor);
         transacaoEntrada.setFornecedor(fornecedor);
+        transacaoEntrada.setUsuario(fornecedor);
 
+        // Definição do tipo de transação
         transacaoEntrada.setTipoTransacao(TipoTransacao.ENTRADA);
 
         return transacaoEntrada;

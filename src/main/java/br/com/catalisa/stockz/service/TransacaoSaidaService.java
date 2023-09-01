@@ -1,5 +1,6 @@
 package br.com.catalisa.stockz.service;
 
+import br.com.catalisa.stockz.enums.StatusProduto;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.Comprador;
 import br.com.catalisa.stockz.model.Estoque;
@@ -58,7 +59,13 @@ public class TransacaoSaidaService {
     public TransacaoSaidaResponseDTO criar(TransacaoSaidaDTO transacaoSaidaDTO) throws Exception {
 
         Comprador comprador = buscarComprador(transacaoSaidaDTO.getEmailComprador());
+
         Produto produto = buscarProduto(transacaoSaidaDTO.getProduto().getId());
+
+        if (produto.getStatusProduto() == StatusProduto.INATIVO){
+            throw new EntidadeNaoEncontradaException("Produto não encontrado");
+        }
+
         TransacaoSaida transacaoSaida = criarTransacaoSaida(transacaoSaidaDTO, produto);
         Estoque estoqueEncontrado = buscarEstoqueDoProduto(produto);
 

@@ -1,6 +1,7 @@
 package br.com.catalisa.stockz.utils.mapper;
 
 import br.com.catalisa.stockz.enums.TipoTransacao;
+import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.Comprador;
 import br.com.catalisa.stockz.model.TransacaoEntrada;
 import br.com.catalisa.stockz.model.TransacaoSaida;
@@ -31,12 +32,14 @@ public class TransacaoSaidaMapper {
     }
     public TransacaoSaida toTransacaoSaida(TransacaoSaidaDTO transacaoSaidaDTO){
         TransacaoSaida transacaoSaida = new TransacaoSaida();
-        transacaoSaida.setDataHora(transacaoSaidaDTO.getDataHora());
         transacaoSaida.setQuantidade(transacaoSaidaDTO.getQuantidade());
+        transacaoSaida.setDataHora(transacaoSaidaDTO.getDataHora());
 
-        Comprador comprador = compradorRepository.findByEmail(transacaoSaidaDTO.getEmailComprador()).get();
-        transacaoSaida.setUsuario(comprador);
+        Comprador comprador = compradorRepository.findByEmail(transacaoSaidaDTO.getEmailComprador())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Comprador não encontrado."));
+
         transacaoSaida.setComprador(comprador);
+        transacaoSaida.setUsuario(comprador);
 
         transacaoSaida.setProduto(transacaoSaidaDTO.getProduto());
 

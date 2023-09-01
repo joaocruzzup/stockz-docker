@@ -11,6 +11,7 @@ import javax.persistence.*;
 public class TransacaoSaida extends Transacao {
 
     @ManyToOne
+    @JoinColumn(name = "comprador_id")
     private Comprador comprador;
 
 }
