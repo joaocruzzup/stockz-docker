@@ -49,13 +49,18 @@ public class ProdutoService {
         return produtoDTO;
     }
 
-    public ProdutoDTO listarPorNome(String nome){
-        Produto produtoEncontrado = buscarProdutoPorNome(nome);
-        ProdutoDTO produtoDTO = produtosMapper.toProdutosDTO(produtoEncontrado);
-        return produtoDTO;
+    public List<ProdutoDTO> listarPorNome(String nome){
+        List<Produto> produtoList = buscarProdutosPorNome(nome);
+        List<ProdutoDTO> produtoDTOList = new ArrayList<>();
+        for (Produto produto : produtoList) {
+            if (produto.getStatusProduto() == StatusProduto.ATIVO){
+                ProdutoDTO produtoDTO = produtosMapper.toProdutosDTO(produto);
+                produtoDTOList.add(produtoDTO);
+            }
+        }
+        return produtoDTOList;
     }
 
-    //ToDo tentar mudar a categoria
     public ProdutoDTO criar(ProdutoDTO produtoDTO) {
         Optional<Categoria> categoriaOptional = categoriasRepository.findById(produtoDTO.getCategoria().getId());
         if (categoriaOptional.isEmpty()){
@@ -105,7 +110,7 @@ public class ProdutoService {
         return new DelecaoResponse("Produto deletado com sucesso");
     }
 
-    private Produto buscarProdutoPorId(Long id) {
+    public Produto buscarProdutoPorId(Long id) {
         Optional<Produto> produtosOptional = produtoRepository.findById(id);
 
         if (produtosOptional.isEmpty()) {
@@ -114,13 +119,14 @@ public class ProdutoService {
         return produtosOptional.get();
     }
 
-    private Produto buscarProdutoPorNome(String nome) {
-        Optional<Produto> produtosOptional = produtoRepository.findByNome(nome);
+    public List<Produto> buscarProdutosPorNome(String nome) {
+        List<Produto> produtoList = produtoRepository.findAllByNome(nome);
 
-        if (produtosOptional.isEmpty()) {
+        if (produtoList.isEmpty()) {
             throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
-        return produtosOptional.get();
+        return produtoList;
     }
+
 
 }

@@ -70,7 +70,7 @@ public class TransacaoEntradaService {
     private TransacaoEntrada buscarTransacaoEntradaPorId(Long id) throws Exception {
         Optional<TransacaoEntrada> transacaoEntradaOptional = transacaoEntradaRepository.findById(id);
         if (transacaoEntradaOptional.isEmpty()) {
-            throw new Exception("Transação de entrada não encontrada");
+            throw new EntidadeNaoEncontradaException("Transação de entrada não encontrada");
         }
         return transacaoEntradaOptional.get();
     }

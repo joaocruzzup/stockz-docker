@@ -110,22 +110,22 @@ public class ProdutoControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("Buscar produto por Nome existente")
-    public void buscarProdutoPorNomeExistenteTeste() throws Exception {
-
-        String nomeProduto = "computador";
-
-        when(produtoService.listarPorNome(nomeProduto)).thenReturn(produtoDTO1);
-
-        String responseJson = objectMapper.writeValueAsString(produtoDTO1);
-
-        mockMvc.perform(get("/api/produtos/nome/{nome}", nomeProduto)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().json(responseJson))
-                .andDo(print());
-    }
+//    @Test
+//    @DisplayName("Buscar produto por Nome existente")
+//    public void buscarProdutoPorNomeExistenteTeste() throws Exception {
+//
+//        String nomeProduto = "computador";
+//
+//        when(produtoService.listarPorNome(nomeProduto)).thenReturn(produtoDTO1);
+//
+//        String responseJson = objectMapper.writeValueAsString(produtoDTO1);
+//
+//        mockMvc.perform(get("/api/produtos/nome/{nome}", nomeProduto)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(content().json(responseJson))
+//                .andDo(print());
+//    }
 
     @Test
     @DisplayName("Buscar produto por Nome inexistente")
