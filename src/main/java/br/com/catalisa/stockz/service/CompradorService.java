@@ -41,7 +41,7 @@ public class CompradorService {
 
     public CompradorDTO criar(CompradorDTO compradorDTO){
         Comprador comprador = compradorMapper.toCompradores(compradorDTO);
-        validarEmailUnicoComprador(comprador);
+        validarEmailUnicoComprador(comprador.getEmail());
         compradorRepository.save(comprador);
         return compradorDTO;
     }
@@ -49,14 +49,18 @@ public class CompradorService {
     public CompradorDTO atualizar(Long id, CompradorDTO compradorDTO) throws Exception {
 
         Comprador compradorEncontrado = buscarCompradorPorId(id);
-        CompradorDTO compradorDtoRetorno = compradorMapper.toCompradoresDto(compradorEncontrado);
 
         if (compradorDTO.getNome() != null){
-            compradorDtoRetorno.setNome(compradorDTO.getNome());
+            compradorEncontrado.setNome(compradorDTO.getNome());
         }
         if (compradorDTO.getEmail() != null){
-            compradorDtoRetorno.setEmail(compradorDTO.getEmail());
+            validarEmailUnicoComprador(compradorDTO.getEmail());
+            compradorEncontrado.setEmail(compradorDTO.getEmail());
         }
+
+        CompradorDTO compradorDtoRetorno = compradorMapper.toCompradoresDto(compradorEncontrado);
+
+        compradorRepository.save(compradorEncontrado);
 
         return compradorDtoRetorno;
     }
@@ -66,10 +70,10 @@ public class CompradorService {
         compradorRepository.delete(compradorEncontrado);
     }
 
-    public void validarEmailUnicoComprador(Comprador comprador)  {
-        Optional<Comprador> compradorExistente = compradorRepository.findByEmail(comprador.getEmail());
+    public void validarEmailUnicoComprador(String email)  {
+        Optional<Comprador> compradorExistente = compradorRepository.findByEmail(email);
         if (compradorExistente.isPresent()) {
-            throw new EmailDuplicadoException("Comprador já existente");
+            throw new EmailDuplicadoException("Comprador com esse email já existe");
         }
     }
 

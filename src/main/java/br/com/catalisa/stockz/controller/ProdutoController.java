@@ -28,7 +28,7 @@ public class ProdutoController {
     }
 
     @GetMapping(path = "/nome/{nome}")
-    ResponseEntity<ProdutoDTO> listarPorId(@PathVariable String nome)  {
+    ResponseEntity<List<ProdutoDTO>> listarPorNome(@PathVariable String nome)  {
         return ResponseEntity.ok(produtoService.listarPorNome(nome));
     }
 

@@ -78,7 +78,7 @@ public class TransacaoSaidaService {
         Optional<TransacaoSaida> transacaoSaidaOptional = transacaoSaidaRepository.findById(id);
 
         if (transacaoSaidaOptional.isEmpty()) {
-            throw new Exception("Transação de saída não encontrada");
+            throw new EntidadeNaoEncontradaException("Transação de saída não encontrada");
         }
         return transacaoSaidaOptional.get();
     }
@@ -93,19 +93,19 @@ public class TransacaoSaidaService {
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Produto não encontrado"));
     }
 
-    private TransacaoSaida criarTransacaoSaida(TransacaoSaidaDTO transacaoSaidaDTO, Produto produto) throws Exception {
+    public TransacaoSaida criarTransacaoSaida(TransacaoSaidaDTO transacaoSaidaDTO, Produto produto) throws Exception {
         TransacaoSaida transacaoSaida = transacaoSaidaMapper.toTransacaoSaida(transacaoSaidaDTO);
         transacaoSaida.setProduto(produto);
         transacaoSaida.setEstoque(buscarEstoqueDoProduto(produto));
         return transacaoSaida;
     }
 
-    private Estoque buscarEstoqueDoProduto(Produto produto) throws Exception {
+    public Estoque buscarEstoqueDoProduto(Produto produto) throws Exception {
         return estoqueRepository.findByProduto(produto)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Estoque não presente"));
     }
 
-    private void atualizarEstoque(Estoque estoque, TransacaoSaida transacaoSaida) {
+    public void atualizarEstoque(Estoque estoque, TransacaoSaida transacaoSaida) {
         estoque.setQuantidade(estoque.getQuantidade() - transacaoSaida.getQuantidade());
         estoque.getTransacoes().add(transacaoSaida);
 
