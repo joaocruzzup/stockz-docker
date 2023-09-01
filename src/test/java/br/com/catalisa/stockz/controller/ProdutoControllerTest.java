@@ -1,7 +1,7 @@
 package br.com.catalisa.stockz.controller;
 
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
-import br.com.catalisa.stockz.exception.error.ErrorResponse;
+import br.com.catalisa.stockz.exception.error.ErrorMessage;
 import br.com.catalisa.stockz.model.Categoria;
 import br.com.catalisa.stockz.model.dto.ProdutoDTO;
 import br.com.catalisa.stockz.service.ProdutoService;
@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,7 +100,7 @@ public class ProdutoControllerTest {
 
         when(produtoService.listarPorId(idProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto nao encontrado"));
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
 
 
         mockMvc.perform(get("/api/produtos/{id}", idProduto)
@@ -136,7 +135,7 @@ public class ProdutoControllerTest {
 
         when(produtoService.listarPorNome(nomeProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto nao encontrado"));
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
 
         mockMvc.perform(get("/api/produtos/nome/{nome}", nomeProduto)
                         .contentType(MediaType.APPLICATION_JSON))

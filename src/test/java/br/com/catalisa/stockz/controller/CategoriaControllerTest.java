@@ -2,7 +2,7 @@ package br.com.catalisa.stockz.controller;
 
 import br.com.catalisa.stockz.exception.CategoriaJaCadastradaException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
-import br.com.catalisa.stockz.exception.error.ErrorResponse;
+import br.com.catalisa.stockz.exception.error.ErrorMessage;
 import br.com.catalisa.stockz.model.dto.CategoriaDTO;
 import br.com.catalisa.stockz.service.CategoriaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -98,7 +98,7 @@ public class CategoriaControllerTest {
 
         when(categoriaService.listarPorId(idCategoria)).thenThrow(new EntidadeNaoEncontradaException("Categoria não encontrada"));
 
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Categoria não encontrada");
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Categoria não encontrada");
 
         mockMvc.perform(get("/api/categorias/{id}", idCategoria)
                         .contentType(MediaType.APPLICATION_JSON))

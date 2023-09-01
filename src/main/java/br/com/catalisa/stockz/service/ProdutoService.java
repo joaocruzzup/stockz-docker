@@ -1,10 +1,11 @@
 package br.com.catalisa.stockz.service;
 
 import br.com.catalisa.stockz.enums.StatusProduto;
-import br.com.catalisa.stockz.exception.AtributoNaoPreenchidoException;
+import br.com.catalisa.stockz.exception.AtributoIncorretoException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.Categoria;
 import br.com.catalisa.stockz.model.Produto;
+import br.com.catalisa.stockz.model.dto.DelecaoResponse;
 import br.com.catalisa.stockz.model.dto.ProdutoDTO;
 import br.com.catalisa.stockz.repository.CategoriaRepository;
 import br.com.catalisa.stockz.repository.ProdutoRepository;
@@ -12,6 +13,7 @@ import br.com.catalisa.stockz.utils.mapper.ProdutosMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +59,7 @@ public class ProdutoService {
     public ProdutoDTO criar(ProdutoDTO produtoDTO) {
         Optional<Categoria> categoriaOptional = categoriasRepository.findById(produtoDTO.getCategoria().getId());
         if (categoriaOptional.isEmpty()){
-            throw new AtributoNaoPreenchidoException("Atributo categoria preenchido incorretamente");
+            throw new AtributoIncorretoException("Atributo categoria preenchido incorretamente");
         }
         Produto produto = produtosMapper.toProdutos(produtoDTO);
         produtoRepository.save(produto);
@@ -72,6 +74,9 @@ public class ProdutoService {
             produtoEncontrado.setNome(produtoDTO.getNome());
         }
         if (produtoDTO.getPreco() != null){
+            if (produtoDTO.getPreco().compareTo(BigDecimal.ZERO) <= 0){
+                throw new AtributoIncorretoException("O preço deve ser maior que zero");
+            }
             produtoEncontrado.setPreco(produtoDTO.getPreco());
         }
         if (produtoDTO.getDescricao() != null){
@@ -89,14 +94,15 @@ public class ProdutoService {
         return produtosMapper.toProdutosDTO(produtoEncontrado);
     }
 
-    public void deletar(Long id) {
+    public DelecaoResponse deletar(Long id) {
         Optional<Produto> produtosOptional = produtoRepository.findById(id);
         if (produtosOptional.isEmpty()){
             throw new EntidadeNaoEncontradaException("Produto não encontrado");
         }
         Produto produto = produtosOptional.get();
         produto.setStatusProduto(StatusProduto.INATIVO);
-        produtoRepository.delete(produto);
+        produtoRepository.save(produto);
+        return new DelecaoResponse("Produto deletado com sucesso");
     }
 
     private Produto buscarProdutoPorId(Long id) {

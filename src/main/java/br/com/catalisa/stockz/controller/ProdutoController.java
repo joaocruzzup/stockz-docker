@@ -1,5 +1,6 @@
 package br.com.catalisa.stockz.controller;
 
+import br.com.catalisa.stockz.model.dto.DelecaoResponse;
 import br.com.catalisa.stockz.model.dto.ProdutoDTO;
 import br.com.catalisa.stockz.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,7 +33,7 @@ public class ProdutoController {
     }
 
     @PostMapping
-    ResponseEntity<ProdutoDTO> criar(@RequestBody ProdutoDTO produtoDTO)  {
+    ResponseEntity<ProdutoDTO> criar(@RequestBody @Valid ProdutoDTO produtoDTO)  {
         ProdutoDTO novoProduto = produtoService.criar(produtoDTO);
         return new ResponseEntity<>(novoProduto, HttpStatus.CREATED);
     }
@@ -43,8 +45,8 @@ public class ProdutoController {
     }
 
     @DeleteMapping(path = "{id}")
-    ResponseEntity<Void> deletar(@PathVariable Long id) {
-        produtoService.deletar(id);
-        return ResponseEntity.ok().build();
+    ResponseEntity<DelecaoResponse> deletar(@PathVariable Long id) {
+        DelecaoResponse delecaoResponse = produtoService.deletar(id);
+        return ResponseEntity.ok(delecaoResponse);
     }
 }
