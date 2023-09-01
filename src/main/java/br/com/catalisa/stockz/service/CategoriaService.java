@@ -5,6 +5,7 @@ import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
 import br.com.catalisa.stockz.model.Categoria;
 import br.com.catalisa.stockz.model.Produto;
 import br.com.catalisa.stockz.model.dto.CategoriaDTO;
+import br.com.catalisa.stockz.model.dto.DelecaoResponse;
 import br.com.catalisa.stockz.repository.CategoriaRepository;
 import br.com.catalisa.stockz.repository.ProdutoRepository;
 import br.com.catalisa.stockz.utils.mapper.CategoriaMapper;
@@ -63,15 +64,16 @@ public class CategoriaService {
         return categoriaMapper.toCategoriasDto(categoriaEncontrada);
     }
 
-    public void deletar(Long id) throws Exception {
+    public DelecaoResponse deletar(Long id) throws Exception {
         Categoria categoriaEncontrada = buscarCategoriaPorId(id);
 
         Optional<Produto> produtosOptional = produtoRepository.findByCategoria(categoriaEncontrada);
         if (produtosOptional.isPresent()){
-            throw new Exception(("Categoria atrelada a um produto. Atualize primeiro a categoria do produto"));
+            throw new Exception(("Não é possível deletar categoria atrelada a um produto. "));
         }
 
         categoriasRepository.delete(categoriaEncontrada);
+        return new DelecaoResponse("Categoria deletada com sucesso");
     }
 
     private Categoria buscarCategoriaPorId(Long id) throws EntidadeNaoEncontradaException {

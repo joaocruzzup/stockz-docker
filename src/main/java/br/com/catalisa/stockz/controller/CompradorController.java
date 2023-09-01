@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,13 +27,13 @@ public class CompradorController {
     }
 
     @PostMapping
-    ResponseEntity<CompradorDTO> criar(@RequestBody CompradorDTO compradorDTO){
+    ResponseEntity<CompradorDTO> criar(@RequestBody @Valid CompradorDTO compradorDTO){
         CompradorDTO novoComprador = compradorService.criar(compradorDTO);
         return new ResponseEntity<>(novoComprador, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "{id}")
-    ResponseEntity<CompradorDTO> atualizar(@PathVariable Long id, @RequestBody CompradorDTO compradorDTO) throws Exception {
+    ResponseEntity<CompradorDTO> atualizar(@PathVariable Long id, @RequestBody @Valid CompradorDTO compradorDTO) throws Exception {
         CompradorDTO compradorDTOAtualizado = compradorService.atualizar(id, compradorDTO);
         return ResponseEntity.ok(compradorDTOAtualizado);
     }

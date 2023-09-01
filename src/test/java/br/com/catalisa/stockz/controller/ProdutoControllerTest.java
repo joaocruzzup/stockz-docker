@@ -1,6 +1,7 @@
 package br.com.catalisa.stockz.controller;
 
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
+import br.com.catalisa.stockz.exception.error.ErrorMessage;
 import br.com.catalisa.stockz.model.Categoria;
 import br.com.catalisa.stockz.model.dto.ProdutoDTO;
 import br.com.catalisa.stockz.service.ProdutoService;
@@ -13,6 +14,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -96,12 +98,15 @@ public class ProdutoControllerTest {
 
         Long idProduto = 1L;
 
-        when(produtoService.listarPorId(idProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto não encontrado"));
+        when(produtoService.listarPorId(idProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto nao encontrado"));
+
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
+
 
         mockMvc.perform(get("/api/produtos/{id}", idProduto)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Produto não encontrado"))
+                .andExpect(content().json(objectMapper.writeValueAsString(errorResponse)))
                 .andDo(print());
     }
 
@@ -128,12 +133,14 @@ public class ProdutoControllerTest {
 
         String nomeProduto = "celular";
 
-        when(produtoService.listarPorNome(nomeProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto não encontrado"));
+        when(produtoService.listarPorNome(nomeProduto)).thenThrow(new EntidadeNaoEncontradaException("Produto nao encontrado"));
+
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Produto nao encontrado");
 
         mockMvc.perform(get("/api/produtos/nome/{nome}", nomeProduto)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Produto não encontrado"))
+                .andExpect(content().json(objectMapper.writeValueAsString(errorResponse)))
                 .andDo(print());
     }
 
@@ -192,7 +199,7 @@ public class ProdutoControllerTest {
     @DisplayName("Deletar um produto inexistente")
     public void deletarUmProdutoInexistenteTest() throws Exception{
 
-        doThrow(new EntidadeNaoEncontradaException("Produto não encontrado"))
+        doThrow(new EntidadeNaoEncontradaException("Produto nao encontrado"))
                 .when(produtoService).deletar(1L);
 
         mockMvc.perform(delete("/api/produtos/{id}", 1L))

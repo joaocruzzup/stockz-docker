@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -25,13 +26,13 @@ public class FornecedorController {
     }
 
     @PostMapping
-    ResponseEntity<FornecedorDTO> criar(@RequestBody FornecedorDTO fornecedorDTO){
+    ResponseEntity<FornecedorDTO> criar(@RequestBody @Valid FornecedorDTO fornecedorDTO){
         FornecedorDTO novoFornecedor = fornecedorService.criar(fornecedorDTO);
         return new ResponseEntity<>(novoFornecedor, HttpStatus.CREATED);
     }
 
     @PutMapping(path = "{id}")
-    ResponseEntity<FornecedorDTO> atualizar(@PathVariable Long id, @RequestBody FornecedorDTO fornecedorDTO) throws Exception {
+    ResponseEntity<FornecedorDTO> atualizar(@PathVariable Long id, @RequestBody @Valid FornecedorDTO fornecedorDTO) throws Exception {
         FornecedorDTO fornecedorDTOAtualizados = fornecedorService.atualizar(id, fornecedorDTO);
         return ResponseEntity.ok(fornecedorDTOAtualizados);
     }

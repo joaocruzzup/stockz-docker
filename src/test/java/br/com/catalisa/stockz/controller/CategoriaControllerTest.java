@@ -2,6 +2,7 @@ package br.com.catalisa.stockz.controller;
 
 import br.com.catalisa.stockz.exception.CategoriaJaCadastradaException;
 import br.com.catalisa.stockz.exception.EntidadeNaoEncontradaException;
+import br.com.catalisa.stockz.exception.error.ErrorMessage;
 import br.com.catalisa.stockz.model.dto.CategoriaDTO;
 import br.com.catalisa.stockz.service.CategoriaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -96,10 +98,12 @@ public class CategoriaControllerTest {
 
         when(categoriaService.listarPorId(idCategoria)).thenThrow(new EntidadeNaoEncontradaException("Categoria não encontrada"));
 
+        ErrorMessage errorResponse = new ErrorMessage(HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.value(), "Categoria não encontrada");
+
         mockMvc.perform(get("/api/categorias/{id}", idCategoria)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Categoria não encontrada"))
+                .andExpect(content().json(objectMapper.writeValueAsString(errorResponse)))
                 .andDo(print());
     }
 
