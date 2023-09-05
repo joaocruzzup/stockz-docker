@@ -3,16 +3,43 @@
 </h1>
 
 ## Sumário
-1. [O que é a Stockz API?](#-o-que-é-a-stockz-api)
-2. [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-3. [Funcionalidades da StockZ API](#-funcionalidades-da-stockz-api)
-4. [Tutorial de uso da StockZ API](#-tutorial-de-uso-da-stockz-api)
-5. [Acessando a documentação da API](#-acessando-a-documentação-da-api)
-6. [Acessando o banco de dados (H2) ](#-acessando-o-banco-de-dados-h2-)
-7. [Alterando o banco de dados (H2) para dados serem persistidos](#-alterando-o-banco-de-dados-h2-para-dados-serem-persistidos)
-8. [Alterando o banco de dados para o Postgres](#-alterando-o-banco-de-dados-para-o-postgres)
-9. [Melhorias para futuras atualizações](#-melhorias-para-futuras-atualizações)
-10. [Autor](#-autor)
+1. [Executando o Projeto com Docker](#-executando-o-projeto-com-docker)
+2. [O que é a Stockz API?](#-o-que-é-a-stockz-api)
+3. [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+4. [Funcionalidades da StockZ API](#-funcionalidades-da-stockz-api)
+5. [Tutorial de uso da StockZ API](#-tutorial-de-uso-da-stockz-api)
+6. [Acessando a documentação da API](#-acessando-a-documentação-da-api)
+7. [Acessando o banco de dados (H2) ](#-acessando-o-banco-de-dados-h2-)
+8. [Alterando o banco de dados (H2) para dados serem persistidos](#-alterando-o-banco-de-dados-h2-para-dados-serem-persistidos)
+9. [Alterando o banco de dados para o Postgres](#-alterando-o-banco-de-dados-para-o-postgres)
+10. [Melhorias para futuras atualizações](#-melhorias-para-futuras-atualizações)
+11. [Autor](#-autor)
+
+## 🐋 Executando o Projeto com Docker
+
+Passo 1: Clonando o Repositório
+Primeiro, você precisa clonar o repositório do projeto para o seu computador local. Use o seguinte comando para clonar o repositório a partir do GitHub:
+`git clone https://github.com/joaocruzzup/stockz-docker.git`
+
+Passo 2: Navegando para o Diretório do Projeto
+
+Após a conclusão da clonagem, navegue para o diretório do projeto:
+
+`cd stockz-docker`
+
+Passo 3: Construindo a Imagem Docker
+Certifique-se de que você está no diretório raiz do stockz-docker, onde o arquivo Dockerfile está localizado. Use o seguinte comando para construir a imagem Docker:
+
+`docker build -t stockz:latest .`
+
+Passo 4: Executando o Contêiner Docker
+Após a construção bem-sucedida da imagem Docker, você pode executar o projeto como um contêiner Docker com o seguinte comando:
+
+`docker run -p 8080:8080 stockz:latest`
+
+Passo 5: Acessando o Projeto
+Após a execução do contêiner, o seu projeto estará disponível na porta especificada do host (neste caso, a porta 8080). Você pode acessá-lo em um navegador da web ou por meio de chamadas de API, dependendo do tipo de projeto que você está executando.
+
 
 ## 📚 O que é a Stockz API?
 O StockZ API é ma API REST para o gerenciamento eficiente de estoques de produtos, oferecendo recursos para categorização, controle de produtos, interações com compradores e fornecedores, registro de transações de entrada e saída, além da geração de relatórios detalhados para a gestão dos estoques.
